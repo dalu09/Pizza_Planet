@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pizza Planet - Visualización de Exoplanetas</title>
+  <!-- Tailwind CSS para estilos rápidos y responsivos -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome para iconos de interfaz -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&display=swap');
+    
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background-color: #050714;
+      color: #ffffff;
+      overflow: hidden;
+    }
+
+    /* Animación de entrada y desvanecimiento de pantallas */
+    .screen {
+      transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+    }
+    .screen-hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(1.05);
+    }
+
+    /* Estilos del planeta estilizado en 2D CSS/SVG de la Home */
+    .planet-glow {
+      box-shadow: 0 0 50px rgba(239, 68, 68, 0.3), inset -20px -20px 40px rgba(0,0,0,0.8);
+    }
+
+    /* Anillo del planeta */
+    .planet-ring {
+      border: 4px solid #ef4444;
+      border-radius: 50%;
+      transform: rotateX(75deg) rotateY(-15deg);
+      box-shadow: 0 0 15px #ef4444;
+    }
+  </style>
+</head>
+<body class="w-screen h-screen relative bg-slate-950 text-white">
+
+  <!-- ==========================================
+       PÁGINA 1: HOME PAGE (Layout Horizontal)
+       ========================================== -->
+  <section id="home-screen" class="screen absolute inset-0 z-20 flex flex-col justify-between p-8 md:p-12 bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950">
+    
+    <!-- Header principal -->
+    <header class="flex justify-between items-center border-b border-slate-800 pb-4">
+      <h1 class="text-3xl md:text-4xl font-extrabold tracking-widest text-slate-100 uppercase">
+        PIZZA PLANET
+      </h1>
+      <span class="text-xs md:text-sm font-semibold tracking-wider px-3 py-1 bg-indigo-900/50 border border-indigo-500/30 rounded-full text-indigo-300">
+        VISUAL ANALYTICS 2026
+      </span>
+    </header>
+
+    <!-- Contenido central horizontal (Dos columnas) -->
+    <main class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center my-auto">
+      
+      <!-- Columna Izquierda: Planeta estilizado (basado en el dibujo) -->
+      <div class="flex justify-center items-center relative py-6">
+        <div class="relative w-56 h-56 md:w-72 md:h-72 flex justify-center items-center">
+          <!-- Cuerpo del planeta -->
+          <div class="w-44 h-44 md:w-56 md:h-56 rounded-full bg-slate-800 border-2 border-slate-600 planet-glow relative overflow-hidden flex items-center justify-center">
+            <!-- Texturas / Líneas del dibujo -->
+            <div class="absolute inset-0 border-t-2 border-b-2 border-slate-600/40 rounded-full scale-90"></div>
+            <div class="absolute inset-0 border-r-2 border-l-2 border-slate-600/30 rounded-full scale-110 rotate-45"></div>
+          </div>
+          <!-- Anillo rojo brillante del boceto -->
+          <div class="planet-ring absolute w-64 h-64 md:w-80 md:h-80 pointer-events-none"></div>
+          <!-- Etiqueta lateral -->
+          <span class="absolute right-0 top-1/4 text-sm font-mono text-red-400 bg-slate-900/80 px-3 py-1 rounded-md border border-red-500/30 shadow-lg">
+            Universo de datos
+          </span>
+        </div>
+      </div>
+
+      <!-- Columna Derecha: Títulos y Botones de Acción -->
+      <div class="flex flex-col items-center md:items-start text-center md:text-left space-y-6">
+        <div>
+          <h2 class="text-4xl md:text-6xl font-bold tracking-tight text-white mb-2">
+            Una rebanada del universo
+          </h2>
+          <p class="text-lg md:text-xl text-slate-400 font-light tracking-wide">
+            explorar &bull; comparar &bull; viajar en el tiempo
+          </p>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-4 items-center w-full md:w-auto">
+          <!-- Botón EMPEZAR -->
+          <button id="btn-start" class="w-full sm:w-auto px-8 py-4 bg-white hover:bg-slate-200 text-slate-950 font-bold text-lg rounded-xl shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3 group">
+            EMPEZAR 
+            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+          </button>
+          
+          <!-- Botón ¿Cómo funciona? -->
+          <button id="btn-how" class="text-indigo-400 hover:text-indigo-300 font-medium text-base underline underline-offset-4 px-4 py-2 hover:bg-indigo-950/30 rounded-lg transition-colors">
+            ¿Cómo funciona?
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer: Datasets -->
+    <footer class="border-t border-slate-800/80 pt-4 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-400 gap-2">
+      <div class="flex items-center gap-3">
+        <span class="font-bold text-red-400 text-sm">Datasets:</span>
+        <div class="flex gap-2">
+          <span class="px-2 py-1 bg-slate-900 border border-slate-800 rounded font-mono">PSCompPars</span>
+          <span class="px-2 py-1 bg-slate-900 border border-slate-800 rounded font-mono">Stellar Hosts</span>
+        </div>
+      </div>
+      <p class="text-slate-500">NASA Exoplanet Archive Data Integration</p>
+    </footer>
+  </section>
+
+
+  <!-- ==========================================
+       PÁGINA 2: VISUALIZACIÓN SIMULACIÓN VÍA LÁCTEA 3D
+       ========================================== -->
+  <section id="viz-screen" class="screen absolute inset-0 z-10 opacity-100 pointer-events-auto">
+    
+    <!-- Lienzo Three.js para la galaxia en 3D -->
+    <div id="galaxy-container" class="w-full h-full"></div>
+
+    <!-- Barra de Navegación Superior -->
+    <nav class="absolute top-0 left-0 right-0 p-6 flex justify-between items-center pointer-events-none z-30">
+      <div class="flex items-center gap-4 pointer-events-auto">
+        <button id="btn-back" class="w-10 h-10 bg-slate-900/80 hover:bg-slate-800 border border-slate-700 text-white rounded-full flex items-center justify-center transition-all shadow-lg">
+          <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center font-bold text-xs">NASA</div>
+          <span class="font-bold tracking-wider text-sm md:text-base">EYES ON EXOPLANETS</span>
+        </div>
+      </div>
+
+      <div class="hidden md:flex gap-6 text-xs tracking-widest font-semibold text-slate-300 pointer-events-auto">
+        <a href="#" class="hover:text-white transition-colors">HOME</a>
+        <a href="#" class="hover:text-white transition-colors">BROWSE DESTINATIONS</a>
+        <a href="#" class="hover:text-white transition-colors">SPACECRAFT</a>
+        <button class="text-slate-400 hover:text-white"><i class="fa-solid fa-magnifying-glass"></i></button>
+      </div>
+    </nav>
+
+    <!-- Overlay Lateral Izquierdo: Telemetría -->
+    <div class="absolute left-6 top-1/3 pointer-events-none z-30 space-y-1 text-slate-300 font-mono text-xs md:text-sm bg-slate-950/40 p-4 rounded-lg border border-slate-800/40 backdrop-blur-sm">
+      <p class="text-slate-500">You are</p>
+      <p class="text-xl font-bold text-white">3,020 <span class="text-xs font-normal text-slate-400">light-years</span></p>
+      <p class="text-slate-400">from Earth</p>
+    </div>
+
+    <!-- Overlay Inferior Izquierdo: Título y Datos Galácticos -->
+    <div class="absolute bottom-6 left-6 pointer-events-none z-30 space-y-1">
+      <div class="flex items-center gap-2">
+        <h2 class="text-3xl md:text-4xl font-bold tracking-tight text-white drop-shadow-md">Milky Way Galaxy</h2>
+        <span class="w-6 h-6 bg-indigo-600/80 rounded-full flex items-center justify-center text-xs text-white"><i class="fa-solid fa-circle-info"></i></span>
+      </div>
+      <p class="text-sm font-mono text-slate-300 tracking-wide drop-shadow">
+        <span class="text-amber-400 font-bold">4,857</span> solar systems | <span class="text-amber-400 font-bold">6,464</span> confirmed planets
+      </p>
+    </div>
+
+    <!-- Overlay Inferior Derecho: Panel de Filtros -->
+    <div class="absolute bottom-6 right-6 z-30 pointer-events-auto bg-slate-900/90 border border-slate-700/80 rounded-xl p-4 shadow-2xl backdrop-blur-md w-72 md:w-80">
+      <span class="text-xs font-bold tracking-wider text-slate-400 uppercase block mb-3">FILTER</span>
+      <div class="grid grid-cols-3 gap-2 text-center">
+        <!-- Filtro 1: Planet Type -->
+        <button class="p-3 bg-indigo-950/80 hover:bg-indigo-900 border border-indigo-500/50 rounded-lg flex flex-col items-center gap-1 transition-all group">
+          <div class="w-6 h-6 rounded-full bg-slate-300 group-hover:scale-110 transition-transform"></div>
+          <span class="text-[10px] font-semibold text-slate-200">Planet Type</span>
+        </button>
+        <!-- Filtro 2: Missions -->
+        <button class="p-3 bg-slate-800/60 hover:bg-slate-700/80 border border-slate-700 rounded-lg flex flex-col items-center gap-1 transition-all group">
+          <i class="fa-solid fa-satellite text-lg text-slate-400 group-hover:text-white transition-colors"></i>
+          <span class="text-[10px] font-semibold text-slate-400 group-hover:text-slate-200">Missions</span>
+        </button>
+        <!-- Filtro 3: Observatory -->
+        <button class="p-3 bg-slate-800/60 hover:bg-slate-700/80 border border-slate-700 rounded-lg flex flex-col items-center gap-1 transition-all group">
+          <i class="fa-solid fa-building-columns text-lg text-slate-400 group-hover:text-white transition-colors"></i>
+          <span class="text-[10px] font-semibold text-slate-400 group-hover:text-slate-200">Observatory</span>
+        </button>
+      </div>
+      <p class="text-[11px] font-mono text-slate-400 mt-3 text-right">Current filter: <span class="text-indigo-300">All Planet Types</span></p>
+    </div>
+
+  </section>
+
+  <!-- ==========================================
+       LIBRERÍAS JS Y LÓGICA DE LA APLICACIÓN
+       ========================================== -->
+  <!-- Three.js y OrbitControls para la renderización 3D -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+  <script>
+    // ----------------------------------------------------
+    // 1. MANEJO DE NAVEGACIÓN ENTRE PÁGINAS (SPA)
+    // ----------------------------------------------------
+    const homeScreen = document.getElementById('home-screen');
+    const vizScreen = document.getElementById('viz-screen');
+    const btnStart = document.getElementById('btn-start');
+    const btnBack = document.getElementById('btn-back');
+
+    // Inicialmente vizScreen oculto en CSS
+    vizScreen.classList.add('screen-hidden');
+
+    btnStart.addEventListener('click', () => {
+      homeScreen.classList.add('screen-hidden');
+      vizScreen.classList.remove('screen-hidden');
+    });
+
+    btnBack.addEventListener('click', () => {
+      vizScreen.classList.add('screen-hidden');
+      homeScreen.classList.remove('screen-hidden');
+    });
+
+    document.getElementById('btn-how').addEventListener('click', () => {
+      alert("PIZZA PLANET es una herramienta de Analítica Visual para explorar el catálogo de exoplanetas confirmados de la NASA mediante visualizaciones interactivas de masa, radio y habitabilidad.");
+    });
+
+
+    // ----------------------------------------------------
+    // 2. MOTOR 3D: SIMULACIÓN DE LA VÍA LÁCTEA (THREE.JS)
+    // ----------------------------------------------------
+    const container = document.getElementById('galaxy-container');
+    
+    // Escena, Cámara y Renderer
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x050714, 0.0008);
+
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
+    camera.position.set(0, 400, 700);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    // Controles de Cámara (OrbitControls)
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.maxDistance = 1200;
+    controls.minDistance = 50;
+
+    // A. Sol Central brillante
+    const sunGeometry = new THREE.SphereGeometry(25, 32, 32);
+    const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    const sunMesh = new THREE.Mesh(sunGeometry, sunMaterial);
+    scene.add(sunMesh);
+
+    // Resplandor del Sol
+    const glowGeometry = new THREE.SphereGeometry(45, 32, 32);
+    const glowMaterial = new THREE.MeshBasicMaterial({
+      color: 0xffaa00,
+      transparent: true,
+      opacity: 0.35,
+      blending: THREE.AdditiveBlending
+    });
+    const glowMesh = new THREE.Mesh(glowGeometry, glowMaterial);
+    scene.add(glowMesh);
+
+    // B. Generación de Estrellas/Sistemas en Espiral (Vía Láctea)
+    const parameters = {
+      count: 15000,
+      size: 3.5,
+      radius: 650,
+      branches: 4,
+      spin: 1,
+      randomness: 0.5,
+      insideColor: '#ffddaa',
+      outsideColor: '#4477ff'
+    };
+
+    const geometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(parameters.count * 3);
+    const colors = new Float32Array(parameters.count * 3);
+
+    const colorInside = new THREE.Color(parameters.insideColor);
+    const colorOutside = new THREE.Color(parameters.outsideColor);
+
+    for (let i = 0; i < parameters.count; i++) {
+      // Posición en espiral
+      const i3 = i * 3;
+      const radius = Math.random() * parameters.radius;
+      const spinAngle = radius * parameters.spin;
+      const branchAngle = ((i % parameters.branches) / parameters.branches) * Math.PI * 2;
+
+      const randomX = (Math.random() - 0.5) * parameters.randomness * radius;
+      const randomY = (Math.random() - 0.5) * parameters.randomness * (radius * 0.3);
+      const randomZ = (Math.random() - 0.5) * parameters.randomness * radius;
+
+      positions[i3] = Math.cos(branchAngle + spinAngle) * radius + randomX;
+      positions[i3 + 1] = randomY;
+      positions[i3 + 2] = Math.sin(branchAngle + spinAngle) * radius + randomZ;
+
+      // Color degradado (centro cálido a bordes fríos)
+      const mixedColor = colorInside.clone();
+      mixedColor.lerp(colorOutside, radius / parameters.radius);
+      
+      // Añadir variación dorada como la imagen de la NASA
+      if (Math.random() > 0.4) {
+        mixedColor.setHex(0xffaa22);
+      }
+
+      colors[i3] = mixedColor.r;
+      colors[i3 + 1] = mixedColor.g;
+      colors[i3 + 2] = mixedColor.b;
+    }
+
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+    // Material de partículas
+    const material = new THREE.PointsMaterial({
+      size: parameters.size,
+      sizeAttenuation: true,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+      vertexColors: true
+    });
+
+    const galaxyPoints = new THREE.Points(geometry, material);
+    scene.add(galaxyPoints);
+
+    // C. Bucle de Animación
+    const clock = new THREE.Clock();
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      const elapsedTime = clock.getElapsedTime();
+
+      // Rotar ligeramente la galaxia
+      galaxyPoints.rotation.y = elapsedTime * 0.03;
+      sunMesh.rotation.y = elapsedTime * 0.1;
+
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    // D. Ajuste de pantalla al redimensionar ventana
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+
+</body>
+</html>
