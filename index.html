@@ -88,7 +88,7 @@
             Una rebanada del universo
           </h2>
           <p class="text-lg md:text-xl text-slate-400 font-light tracking-wide">
-            explorar &bull; comparar &bull; viajar en el tiempo
+            buscar &bull; filtrar &bull; analizar exoplanetas
           </p>
         </div>
 
@@ -113,10 +113,10 @@
         <span class="font-bold text-red-400 text-sm">Datasets:</span>
         <div class="flex gap-2">
           <span class="px-2 py-1 bg-slate-900 border border-slate-800 rounded font-mono">PSCompPars</span>
-          <span class="px-2 py-1 bg-slate-900 border border-slate-800 rounded font-mono">Stellar Hosts</span>
+          <span class="px-2 py-1 bg-slate-900 border border-slate-800 rounded font-mono">PS · Soluciones</span>
         </div>
       </div>
-      <p class="text-slate-500">NASA Exoplanet Archive Data Integration</p>
+      <p class="text-slate-500">NASA Exoplanet Archive · datos locales</p>
     </footer>
   </section>
 
@@ -150,44 +150,42 @@
     </nav>
 
     <!-- Overlay Lateral Izquierdo: Telemetría -->
-    <div class="absolute left-6 top-1/3 pointer-events-none z-30 space-y-1 text-slate-300 font-mono text-xs md:text-sm bg-slate-950/40 p-4 rounded-lg border border-slate-800/40 backdrop-blur-sm">
-      <p class="text-slate-500">You are</p>
-      <p class="text-xl font-bold text-white">3,020 <span class="text-xs font-normal text-slate-400">light-years</span></p>
-      <p class="text-slate-400">from Earth</p>
+    <div class="absolute left-6 top-1/3 z-30 space-y-2 text-slate-300 font-mono text-xs md:text-sm bg-slate-950/80 p-4 rounded-lg border border-slate-800/70 backdrop-blur-sm w-56">
+      <p class="text-slate-400">Catálogo confirmado</p>
+      <p id="planet-count" class="text-xl font-bold text-white">Cargando…</p>
+      <p id="system-count" class="text-slate-400">Conectando con NASA Exoplanet Archive</p>
+      <p id="dataset-status" role="status" class="text-indigo-300 text-[11px]">Leyendo archivos CSV…</p>
     </div>
 
     <!-- Overlay Inferior Izquierdo: Título y Datos Galácticos -->
     <div class="absolute bottom-6 left-6 pointer-events-none z-30 space-y-1">
       <div class="flex items-center gap-2">
-        <h2 class="text-3xl md:text-4xl font-bold tracking-tight text-white drop-shadow-md">Milky Way Galaxy</h2>
+        <h2 class="text-3xl md:text-4xl font-bold tracking-tight text-white drop-shadow-md">Exoplanetas confirmados</h2>
         <span class="w-6 h-6 bg-indigo-600/80 rounded-full flex items-center justify-center text-xs text-white"><i class="fa-solid fa-circle-info"></i></span>
       </div>
       <p class="text-sm font-mono text-slate-300 tracking-wide drop-shadow">
-        <span class="text-amber-400 font-bold">4,857</span> solar systems | <span class="text-amber-400 font-bold">6,464</span> confirmed planets
+        <span id="visible-count" class="text-amber-400 font-bold">—</span> planetas visibles
       </p>
+      <p class="text-[11px] text-slate-400 max-w-md">Posiciones calculadas con coordenadas y distancia del catálogo. La galaxia de fondo es ilustrativa.</p>
     </div>
 
     <!-- Overlay Inferior Derecho: Panel de Filtros -->
-    <div class="absolute bottom-6 right-6 z-30 pointer-events-auto bg-slate-900/90 border border-slate-700/80 rounded-xl p-4 shadow-2xl backdrop-blur-md w-72 md:w-80">
-      <span class="text-xs font-bold tracking-wider text-slate-400 uppercase block mb-3">FILTER</span>
-      <div class="grid grid-cols-3 gap-2 text-center">
-        <!-- Filtro 1: Planet Type -->
-        <button class="p-3 bg-indigo-950/80 hover:bg-indigo-900 border border-indigo-500/50 rounded-lg flex flex-col items-center gap-1 transition-all group">
-          <div class="w-6 h-6 rounded-full bg-slate-300 group-hover:scale-110 transition-transform"></div>
-          <span class="text-[10px] font-semibold text-slate-200">Planet Type</span>
-        </button>
-        <!-- Filtro 2: Missions -->
-        <button class="p-3 bg-slate-800/60 hover:bg-slate-700/80 border border-slate-700 rounded-lg flex flex-col items-center gap-1 transition-all group">
-          <i class="fa-solid fa-satellite text-lg text-slate-400 group-hover:text-white transition-colors"></i>
-          <span class="text-[10px] font-semibold text-slate-400 group-hover:text-slate-200">Missions</span>
-        </button>
-        <!-- Filtro 3: Observatory -->
-        <button class="p-3 bg-slate-800/60 hover:bg-slate-700/80 border border-slate-700 rounded-lg flex flex-col items-center gap-1 transition-all group">
-          <i class="fa-solid fa-building-columns text-lg text-slate-400 group-hover:text-white transition-colors"></i>
-          <span class="text-[10px] font-semibold text-slate-400 group-hover:text-slate-200">Observatory</span>
-        </button>
+    <div class="absolute bottom-6 right-6 z-30 pointer-events-auto bg-slate-900/95 border border-slate-700/80 rounded-xl p-4 shadow-2xl backdrop-blur-md w-72 md:w-80 max-h-[75vh] overflow-y-auto">
+      <span class="text-xs font-bold tracking-wider text-slate-400 uppercase block mb-3">Explorar catálogo</span>
+      <label for="planet-search" class="block text-xs text-slate-300 mb-1">Planeta o sistema</label>
+      <input id="planet-search" type="search" placeholder="Ej. Kepler-22 b" autocomplete="off"
+        class="w-full mb-3 rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-indigo-400">
+      <label for="method-filter" class="block text-xs text-slate-300 mb-1">Método de descubrimiento</label>
+      <select id="method-filter" class="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-400">
+        <option value="">Todos los métodos</option>
+      </select>
+      <p class="text-[10px] text-slate-500 mt-2">El color de cada punto representa su método de descubrimiento.</p>
+      <p id="filter-summary" class="text-[11px] font-mono text-slate-400 mt-3"></p>
+      <div id="planet-results" class="mt-2 space-y-1"></div>
+      <div id="planet-details" class="mt-4 border-t border-slate-700 pt-3 text-xs text-slate-300" aria-live="polite">
+        <p class="text-slate-400">Selecciona un punto del mapa para ver sus datos.</p>
       </div>
-      <p class="text-[11px] font-mono text-slate-400 mt-3 text-right">Current filter: <span class="text-indigo-300">All Planet Types</span></p>
+      <p id="solution-summary" class="text-[10px] text-slate-500 mt-3"></p>
     </div>
 
   </section>
@@ -222,12 +220,299 @@
     });
 
     document.getElementById('btn-how').addEventListener('click', () => {
-      alert("PIZZA PLANET es una herramienta de Analítica Visual para explorar el catálogo de exoplanetas confirmados de la NASA mediante visualizaciones interactivas de masa, radio y habitabilidad.");
+      alert("PIZZA PLANET explora los exoplanetas confirmados del NASA Exoplanet Archive. Busca por planeta o sistema, filtra por método de descubrimiento y selecciona un punto para consultar sus parámetros y soluciones.");
     });
 
 
     // ----------------------------------------------------
-    // 2. MOTOR 3D: SIMULACIÓN DE LA VÍA LÁCTEA (THREE.JS)
+    // 2. CARGA Y EXPLORACIÓN DE LOS DATASETS DE NASA
+    // ----------------------------------------------------
+    const DATA_FILES = {
+      confirmed: './data/PSCompPars_2026.11.12_16.30.57.csv',
+      solutions: './data/PS_2026.11.12_16.32.23.csv'
+    };
+    const numberFormat = new Intl.NumberFormat('es-MX');
+    const statusElement = document.getElementById('dataset-status');
+    const methodFilter = document.getElementById('method-filter');
+    const searchInput = document.getElementById('planet-search');
+    const planetDetails = document.getElementById('planet-details');
+    let planets = [];
+    let visiblePlanets = [];
+    let planetPoints;
+    let maxDistanceLy = 1;
+
+    function parseCSV(text, onRow) {
+      let offset = 0;
+      while (offset < text.length) {
+        const lineEnd = text.indexOf('\n', offset);
+        const end = lineEnd === -1 ? text.length : lineEnd;
+        const line = text.slice(offset, end).replace(/\r$/, '');
+        if (line.trim() && !line.startsWith('#')) break;
+        offset = lineEnd === -1 ? text.length : lineEnd + 1;
+      }
+
+      let row = [];
+      let value = '';
+      let quoted = false;
+      for (let i = offset; i < text.length; i++) {
+        const character = text[i];
+        if (quoted) {
+          if (character === '"' && text[i + 1] === '"') {
+            value += '"';
+            i++;
+          } else if (character === '"') {
+            quoted = false;
+          } else {
+            value += character;
+          }
+        } else if (character === '"' && value.length === 0) {
+          quoted = true;
+        } else if (character === ',') {
+          row.push(value);
+          value = '';
+        } else if (character === '\n' || character === '\r') {
+          row.push(value);
+          value = '';
+          if (row.some((cell) => cell !== '')) onRow(row);
+          row = [];
+          if (character === '\r' && text[i + 1] === '\n') i++;
+        } else {
+          value += character;
+        }
+      }
+      if (value !== '' || row.length) {
+        row.push(value);
+        if (row.some((cell) => cell !== '')) onRow(row);
+      }
+    }
+
+    function readDataset(text, fields, onRecord) {
+      let headers;
+      let records = 0;
+      parseCSV(text, (row) => {
+        if (!headers) {
+          headers = row;
+          return;
+        }
+        const record = {};
+        for (const field of fields) {
+          const index = headers.indexOf(field);
+          if (index !== -1) record[field] = row[index] || '';
+        }
+        onRecord(record);
+        records++;
+      });
+      if (!headers) throw new Error('El CSV no contiene una fila de encabezados.');
+      return { headers, records };
+    }
+
+    function numeric(value) {
+      const parsed = Number(value);
+      return value !== '' && Number.isFinite(parsed) ? parsed : null;
+    }
+
+    function buildPlanet(record) {
+      const distancePc = numeric(record.sy_dist);
+      const ra = numeric(record.ra);
+      const dec = numeric(record.dec);
+      const distanceLy = distancePc === null ? null : distancePc * 3.26156;
+      return {
+        name: record.pl_name,
+        host: record.hostname,
+        method: record.discoverymethod || 'Sin dato',
+        year: numeric(record.disc_year),
+        facility: record.disc_facility,
+        radius: numeric(record.pl_rade),
+        mass: numeric(record.pl_bmasse),
+        period: numeric(record.pl_orbper),
+        distanceLy,
+        ra,
+        dec,
+        solutionType: '',
+        solutionCount: 0
+      };
+    }
+
+    async function fetchCSV(path) {
+      const response = await fetch(path);
+      if (!response.ok) throw new Error(`No se pudo leer ${path} (HTTP ${response.status}).`);
+      return response.text();
+    }
+
+    async function loadCatalogs() {
+      try {
+        const [confirmedText, solutionsText] = await Promise.all([
+          fetchCSV(DATA_FILES.confirmed),
+          fetchCSV(DATA_FILES.solutions)
+        ]);
+        const confirmedFields = ['pl_name', 'hostname', 'discoverymethod', 'disc_year', 'disc_facility', 'pl_rade', 'pl_bmasse', 'pl_orbper', 'sy_dist', 'ra', 'dec'];
+        const planetByName = new Map();
+        const confirmedInfo = readDataset(confirmedText, confirmedFields, (record) => {
+          const planet = buildPlanet(record);
+          planetByName.set(planet.name, planet);
+        });
+
+        const solutionFields = ['pl_name', 'default_flag', 'soltype'];
+        const solutionInfo = readDataset(solutionsText, solutionFields, (record) => {
+          const planet = planetByName.get(record.pl_name);
+          if (!planet) return;
+          planet.solutionCount++;
+          if (record.default_flag === '1') planet.solutionType = record.soltype;
+        });
+
+        planets = [...planetByName.values()].filter((planet) => (
+          planet.ra !== null && planet.dec !== null && planet.distanceLy !== null
+        ));
+        maxDistanceLy = Math.max(...planets.map((planet) => planet.distanceLy), 1);
+        document.getElementById('planet-count').textContent = `${numberFormat.format(planetByName.size)} planetas`;
+        document.getElementById('system-count').textContent =
+          `${numberFormat.format(new Set([...planetByName.values()].map((planet) => planet.host)).size)} sistemas`;
+        document.getElementById('visible-count').textContent = numberFormat.format(planets.length);
+        document.getElementById('solution-summary').textContent =
+          `${numberFormat.format(solutionInfo.records)} registros de parámetros; ${numberFormat.format(confirmedInfo.headers.length)} y ${numberFormat.format(solutionInfo.headers.length)} columnas en los CSV.`;
+        const methods = [...new Set([...planetByName.values()].map((planet) => planet.method))].sort((a, b) => a.localeCompare(b, 'es'));
+        for (const method of methods) {
+          const option = document.createElement('option');
+          option.value = method;
+          option.textContent = method;
+          methodFilter.appendChild(option);
+        }
+        statusElement.textContent = `${numberFormat.format(planets.length)} ubicaciones disponibles${webglUnavailable ? ' · WebGL no disponible' : ''}`;
+        statusElement.classList.replace('text-indigo-300', webglUnavailable ? 'text-amber-300' : 'text-emerald-300');
+        applyFilters();
+      } catch (error) {
+        console.error('Error al cargar los datasets de NASA:', error);
+        statusElement.textContent = `${error.message} Abre el proyecto con un servidor local (p. ej. python3 -m http.server).`;
+        statusElement.classList.replace('text-indigo-300', 'text-red-300');
+        document.getElementById('planet-count').textContent = 'Datos no disponibles';
+        document.getElementById('system-count').textContent = 'Revisa la conexión y la ruta de los CSV';
+      }
+    }
+
+    function methodColor(method) {
+      const palette = {
+        Transit: '#60a5fa',
+        'Radial Velocity': '#f87171',
+        Microlensing: '#c084fc',
+        Imaging: '#34d399',
+        'Transit Timing Variations': '#fbbf24'
+      };
+      if (palette[method]) return new THREE.Color(palette[method]);
+      let hash = 0;
+      for (const character of method) hash = (hash * 31 + character.charCodeAt(0)) | 0;
+      return new THREE.Color().setHSL((Math.abs(hash) % 360) / 360, 0.72, 0.66);
+    }
+
+    function applyFilters() {
+      const query = searchInput.value.trim().toLocaleLowerCase('es');
+      const method = methodFilter.value;
+      visiblePlanets = planets.filter((planet) => (
+        (!method || planet.method === method) &&
+        (!query || planet.name.toLocaleLowerCase('es').includes(query) || planet.host.toLocaleLowerCase('es').includes(query))
+      ));
+      document.getElementById('visible-count').textContent = numberFormat.format(visiblePlanets.length);
+      document.getElementById('filter-summary').textContent =
+        `${numberFormat.format(visiblePlanets.length)} de ${numberFormat.format(planets.length)} planetas con posición`;
+      renderPlanetPoints();
+      renderPlanetResults(query);
+    }
+
+    function renderPlanetResults(query) {
+      const results = document.getElementById('planet-results');
+      results.replaceChildren();
+      if (!query) return;
+      if (!visiblePlanets.length) {
+        results.textContent = 'No hay coincidencias con posición disponible.';
+        results.className = 'mt-2 text-xs text-slate-500';
+        return;
+      }
+      results.className = 'mt-2 space-y-1';
+      for (const planet of visiblePlanets.slice(0, 5)) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'w-full rounded-md bg-slate-800/80 hover:bg-slate-700 px-2 py-1 text-left';
+        button.addEventListener('click', () => showPlanet(planet));
+        const name = document.createElement('span');
+        name.className = 'block text-xs text-white';
+        name.textContent = planet.name;
+        const host = document.createElement('span');
+        host.className = 'block text-[10px] text-slate-400';
+        host.textContent = `${planet.host} · ${planet.method}`;
+        button.append(name, host);
+        results.appendChild(button);
+      }
+      if (visiblePlanets.length > 5) {
+        const more = document.createElement('p');
+        more.className = 'text-[10px] text-slate-500';
+        more.textContent = `Mostrando 5 de ${numberFormat.format(visiblePlanets.length)} coincidencias.`;
+        results.appendChild(more);
+      }
+    }
+
+    function renderPlanetPoints() {
+      if (!planetPoints) return;
+      scene.remove(planetPoints);
+      planetPoints.geometry.dispose();
+      const positions = [];
+      const colors = [];
+      for (const planet of visiblePlanets) {
+        const ra = THREE.MathUtils.degToRad(planet.ra);
+        const dec = THREE.MathUtils.degToRad(planet.dec);
+        const radius = (planet.distanceLy / maxDistanceLy) * 620;
+        positions.push(
+          radius * Math.cos(dec) * Math.cos(ra),
+          radius * Math.sin(dec),
+          radius * Math.cos(dec) * Math.sin(ra)
+        );
+        const color = methodColor(planet.method);
+        colors.push(color.r, color.g, color.b);
+      }
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+      geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+      planetPoints = new THREE.Points(geometry, new THREE.PointsMaterial({
+        size: 5,
+        sizeAttenuation: true,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.95,
+        depthWrite: false
+      }));
+      scene.add(planetPoints);
+    }
+
+    function showPlanet(planet) {
+      planetDetails.replaceChildren();
+      const title = document.createElement('p');
+      title.className = 'font-bold text-white text-sm';
+      title.textContent = planet.name;
+      const host = document.createElement('p');
+      host.className = 'text-slate-400 mt-1';
+      host.textContent = `Sistema: ${planet.host}`;
+      const values = document.createElement('p');
+      values.className = 'mt-2 leading-5';
+      const details = [
+        `Método: ${planet.method}`,
+        `Año: ${planet.year ?? 'Sin dato'}`,
+        `Distancia: ${planet.distanceLy === null ? 'Sin dato' : `${numberFormat.format(Math.round(planet.distanceLy))} años luz`}`,
+        `Radio: ${planet.radius === null ? 'Sin dato' : `${planet.radius} radios terrestres`}`,
+        `Masa: ${planet.mass === null ? 'Sin dato' : `${planet.mass} masas terrestres`}`,
+        `Período: ${planet.period === null ? 'Sin dato' : `${planet.period} días`}`
+      ];
+      values.textContent = details.join(' · ');
+      const solution = document.createElement('p');
+      solution.className = 'text-slate-500 mt-2';
+      solution.textContent = planet.solutionType
+        ? `Solución predeterminada: ${planet.solutionType} · ${numberFormat.format(planet.solutionCount)} registros de parámetros`
+        : 'No se encontró una solución relacionada en el archivo PS.';
+      planetDetails.append(title, host, values, solution);
+    }
+
+    searchInput.addEventListener('input', applyFilters);
+    methodFilter.addEventListener('change', applyFilters);
+
+    // ----------------------------------------------------
+    // 3. MOTOR 3D: MAPA ESPACIAL DE EXOPLANETAS
     // ----------------------------------------------------
     const container = document.getElementById('galaxy-container');
     
@@ -238,17 +523,30 @@
     const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
     camera.position.set(0, 400, 700);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    container.appendChild(renderer.domElement);
+    let renderer;
+    let controls;
+    let webglUnavailable = false;
+    try {
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      container.appendChild(renderer.domElement);
 
-    // Controles de Cámara (OrbitControls)
-    const controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-    controls.maxDistance = 1200;
-    controls.minDistance = 50;
+      // Controles de Cámara (OrbitControls)
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.05;
+      controls.maxDistance = 1200;
+      controls.minDistance = 50;
+    } catch (error) {
+      webglUnavailable = true;
+      console.error('No se pudo iniciar la visualización 3D:', error);
+      if (renderer?.domElement.isConnected) renderer.domElement.remove();
+      const message = document.createElement('p');
+      message.className = 'absolute inset-0 flex items-center justify-center px-8 text-center text-slate-300';
+      message.textContent = 'WebGL no está disponible en este navegador. Los datos del catálogo seguirán disponibles en el panel.';
+      container.appendChild(message);
+    }
 
     // A. Sol Central brillante
     const sunGeometry = new THREE.SphereGeometry(25, 32, 32);
@@ -267,7 +565,7 @@
     const glowMesh = new THREE.Mesh(glowGeometry, glowMaterial);
     scene.add(glowMesh);
 
-    // B. Generación de Estrellas/Sistemas en Espiral (Vía Láctea)
+    // B. Fondo galáctico ilustrativo; los puntos de datos se cargan desde el catálogo.
     const parameters = {
       count: 15000,
       size: 3.5,
@@ -332,6 +630,22 @@
 
     // C. Bucle de Animación
     const clock = new THREE.Clock();
+    const raycaster = new THREE.Raycaster();
+    raycaster.params.Points.threshold = 5;
+
+    if (renderer) {
+      renderer.domElement.addEventListener('click', (event) => {
+        if (!planetPoints || !visiblePlanets.length) return;
+        const bounds = renderer.domElement.getBoundingClientRect();
+        const pointer = new THREE.Vector2(
+          ((event.clientX - bounds.left) / bounds.width) * 2 - 1,
+          -((event.clientY - bounds.top) / bounds.height) * 2 + 1
+        );
+        raycaster.setFromCamera(pointer, camera);
+        const [hit] = raycaster.intersectObject(planetPoints);
+        if (hit && Number.isInteger(hit.index)) showPlanet(visiblePlanets[hit.index]);
+      });
+    }
 
     function animate() {
       requestAnimationFrame(animate);
@@ -346,14 +660,16 @@
       renderer.render(scene, camera);
     }
 
-    animate();
+    if (renderer) animate();
 
     // D. Ajuste de pantalla al redimensionar ventana
     window.addEventListener('resize', () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
+      if (renderer) renderer.setSize(window.innerWidth, window.innerHeight);
     });
+
+    loadCatalogs();
   </script>
 
 </body>
