@@ -357,6 +357,29 @@
     @media (prefers-reduced-motion: no-preference) {
       .compare-svg.is-new .compare-body { animation: compare-in 0.55s var(--ease-out) both; transform-box: fill-box; transform-origin: 50% 100%; }
     }
+    /* ===== 05 · Ficha: tickets tipo comanda ===== */
+    .ticket {
+      --cut: 12px;
+      background: #0e0e15;
+      border: 1px solid rgba(244, 241, 232, 0.14);
+      clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, var(--cut) 100%, 0 calc(100% - var(--cut)));
+    }
+    .ticket-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.75rem 1.1rem;
+      border-bottom: 1px dashed rgba(244, 241, 232, 0.22);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(244, 241, 232, 0.7);
+    }
+    .ticket-body { padding: 0.9rem 1.1rem 1.1rem; }
+    .ticket .data-row + .data-row { margin-top: 0.55rem; }
+    .err { font-size: 0.72rem; color: rgba(244, 241, 232, 0.55); margin-left: 0.35rem; white-space: nowrap; }
+
     /* ===== 04 · Línea del tiempo: deslizador ===== */
     .tl-range { -webkit-appearance: none; appearance: none; background: transparent; height: 26px; margin: 0; display: block; cursor: pointer; --fill: 100%; }
     .tl-range::-webkit-slider-runnable-track { height: 4px; background: linear-gradient(to right, var(--cian) var(--fill), rgba(244, 241, 232, 0.2) var(--fill)); }
@@ -792,6 +815,97 @@
   </section>
 
   <!-- ==========================================
+       05 · FICHA (profundizar)
+       ========================================== -->
+  <section id="ficha-screen" aria-label="Ficha del planeta" class="screen screen-hidden absolute inset-0 z-10 bg-night flex flex-col" inert>
+    <header class="relative z-40 flex items-center justify-between gap-4 px-4 sm:px-6 h-14 border-b border-titanio/15 bg-night">
+      <a href="#/" class="flex items-center gap-3" aria-label="Pizza Planet, volver al inicio">
+        <svg viewBox="0 0 40 40" class="w-7 h-7" aria-hidden="true">
+          <circle cx="20" cy="20" r="11" fill="none" stroke="#FF2DAA" stroke-width="2.5" />
+          <path d="M20 20 L25.8 10.6 A11 11 0 0 1 30.3 15.7 Z" fill="#08080C" />
+          <path d="M22 18 L27.8 8.6 A11 11 0 0 1 32.3 13.7 Z" fill="none" stroke="#FF2DAA" stroke-width="2" stroke-linejoin="round" />
+          <ellipse cx="20" cy="20" rx="18" ry="4.5" transform="rotate(-16 20 20)" fill="none" stroke="#D7FF2F" stroke-width="2" />
+        </svg>
+        <span class="font-display font-black tracking-[0.12em] text-sm sm:text-base">PIZZA PLANET</span>
+      </a>
+      <h1 class="hidden md:block font-mono text-xs uppercase tracking-[0.22em] text-titanio/70" id="ficha-header-title">Ficha</h1>
+      <div class="flex items-center gap-4">
+        <span class="hidden sm:inline font-mono text-xs tracking-[0.18em] text-titanio/55 tabular" aria-label="Paso 5 de 5">05 / 05</span>
+        <button type="button" data-open-help class="cut w-10 h-10 grid place-items-center bg-titanio/10 hover:bg-titanio/20 font-display font-bold text-sm transition-colors" style="--cut:8px" aria-label="¿Cómo funciona?">?</button>
+      </div>
+    </header>
+    <main class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
+      <div id="ficha-body" class="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-10 py-6 lg:py-10">
+        <p class="font-mono text-sm text-titanio/70" role="status">Cargando el catálogo de la NASA…</p>
+      </div>
+    </main>
+    <nav data-tabs class="relative z-40 grid grid-cols-4 border-t border-titanio/15 bg-night" aria-label="Pantallas"></nav>
+  </section>
+
+  <!-- ==========================================
+       FUENTES (metodología y datos)
+       ========================================== -->
+  <section id="fuentes-screen" aria-label="Fuentes y metodología" class="screen screen-hidden absolute inset-0 z-10 bg-night flex flex-col" inert>
+    <header class="relative z-40 flex items-center justify-between gap-4 px-4 sm:px-6 h-14 border-b border-titanio/15 bg-night">
+      <a href="#/" class="flex items-center gap-3" aria-label="Pizza Planet, volver al inicio">
+        <svg viewBox="0 0 40 40" class="w-7 h-7" aria-hidden="true">
+          <circle cx="20" cy="20" r="11" fill="none" stroke="#FF2DAA" stroke-width="2.5" />
+          <path d="M20 20 L25.8 10.6 A11 11 0 0 1 30.3 15.7 Z" fill="#08080C" />
+          <path d="M22 18 L27.8 8.6 A11 11 0 0 1 32.3 13.7 Z" fill="none" stroke="#FF2DAA" stroke-width="2" stroke-linejoin="round" />
+          <ellipse cx="20" cy="20" rx="18" ry="4.5" transform="rotate(-16 20 20)" fill="none" stroke="#D7FF2F" stroke-width="2" />
+        </svg>
+        <span class="font-display font-black tracking-[0.12em] text-sm sm:text-base">PIZZA PLANET</span>
+      </a>
+      <h1 class="hidden md:block font-mono text-xs uppercase tracking-[0.22em] text-titanio/70" >Fuentes y metodología</h1>
+      <div class="flex items-center gap-4">
+        
+        <button type="button" data-open-help class="cut w-10 h-10 grid place-items-center bg-titanio/10 hover:bg-titanio/20 font-display font-bold text-sm transition-colors" style="--cut:8px" aria-label="¿Cómo funciona?">?</button>
+      </div>
+    </header>
+    <main class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
+      <article class="w-full max-w-3xl mx-auto px-5 sm:px-8 py-8 lg:py-12 text-[1.02rem] leading-relaxed text-titanio/90">
+        <h2 class="font-display font-bold text-3xl sm:text-4xl leading-tight">De dónde salen los datos</h2>
+        <p class="mt-4">Todo lo que ves en Pizza Planet viene de dos tablas del <a class="text-cian underline underline-offset-4" href="https://exoplanetarchive.ipac.caltech.edu/" target="_blank" rel="noopener">NASA Exoplanet Archive</a>, exportadas el 12 de noviembre de 2026 y leídas directamente en tu navegador. Nada se escribe a mano.</p>
+
+        <div class="mt-8 grid gap-4 sm:grid-cols-2">
+          <div class="ticket p-5">
+            <p class="font-mono text-sm font-medium">PSCompPars <span class="text-titanio/60">· catálogo</span></p>
+            <p class="mt-2 text-sm text-titanio/75">Una fila por planeta confirmado, con los parámetros que el archivo considera más completos. Alimenta el mapa, la búsqueda, la comparación, la línea del tiempo y la ficha.</p>
+            <p class="mt-3 font-mono text-xs text-cian tabular" data-fuentes="confirmed">Cargando…</p>
+          </div>
+          <div class="ticket p-5">
+            <p class="font-mono text-sm font-medium">PS <span class="text-titanio/60">· soluciones</span></p>
+            <p class="mt-2 text-sm text-titanio/75">Cada fila es una medición publicada para un planeta: un mismo planeta puede tener varias. No se cuentan como planetas extra; se usan para mostrar cuántas publicaciones respaldan cada uno.</p>
+            <p class="mt-3 font-mono text-xs text-cian tabular" data-fuentes="solutions">Cargando…</p>
+          </div>
+        </div>
+        <p class="mt-4 text-sm text-titanio/70">Las dos tablas se relacionan por el nombre del planeta (<code class="font-mono text-titanio">pl_name</code>).</p>
+
+        <h3 class="mt-12 font-display font-bold text-xl">«Sin dato» no es cero</h3>
+        <p class="mt-3">Cuando la NASA no tiene una medición, la celda del archivo está vacía. Aquí se muestra como <span class="font-mono text-titanio/60">sin dato</span> y nunca se convierte en 0. Los valores calculados por nosotros o por el archivo llevan <span class="font-mono text-cian">≈</span>.</p>
+
+        <h3 class="mt-12 font-display font-bold text-xl">Criterios y cálculos</h3>
+        <dl class="mt-4 space-y-4">
+          <div><dt class="font-medium">Zona habitable (aproximación)</dt><dd class="text-titanio/75">El planeta recibe entre 0.25 y 1.5 veces la luz que recibe la Tierra (<code class="font-mono">pl_insol</code>). Es un criterio simplificado: no considera atmósfera ni tipo de estrella.</dd></div>
+          <div><dt class="font-medium">Terrestre</dt><dd class="text-titanio/75">Radio de hasta 1.6 veces el de la Tierra (<code class="font-mono">pl_rade</code>).</dd></div>
+          <div><dt class="font-medium">Tipo por tamaño</dt><dd class="text-titanio/75">Rocoso hasta 1.6 R⊕ · mini-Neptuno hasta 4 · tipo Neptuno hasta 10 · gigante gaseoso por encima. Es una clasificación aproximada.</dd></div>
+          <div><dt class="font-medium">Masa calculada</dt><dd class="text-titanio/75">Si <code class="font-mono">pl_bmassprov</code> dice «M-R relationship», el archivo estimó la masa a partir del radio: se marca con ≈.</dd></div>
+          <div><dt class="font-medium">Gravedad</dt><dd class="text-titanio/75">Masa ÷ radio², en unidades terrestres. Siempre es un valor calculado.</dd></div>
+          <div><dt class="font-medium">Posición en el mapa 3D</dt><dd class="text-titanio/75">Ascensión recta y declinación (<code class="font-mono">ra</code>, <code class="font-mono">dec</code>) dan la dirección; la distancia (<code class="font-mono">sy_dist</code>, en pársecs × 3.26 = años luz) va en escala logarítmica para que quepan desde 4 hasta más de 27,000 años luz. Las estrellas de fondo y las órbitas de los sistemas son ilustrativas.</dd></div>
+          <div><dt class="font-medium">Línea del tiempo</dt><dd class="text-titanio/75">Usa el año de descubrimiento (<code class="font-mono">disc_year</code>) de los planetas que hoy están confirmados.</dd></div>
+        </dl>
+
+        <h3 class="mt-12 font-display font-bold text-xl">Cómo se codifica el mapa</h3>
+        <p class="mt-3">El método de descubrimiento se distingue por color y forma a la vez, para no depender solo del color:</p>
+        <ul id="fuentes-legend" class="mt-3 grid gap-2 sm:grid-cols-2 text-sm"></ul>
+
+        <p class="mt-12 pt-6 border-t border-titanio/15 text-sm text-titanio/65">Pizza Planet es un proyecto de Visual Analytics. Usa los datos públicos del NASA Exoplanet Archive; no está afiliado ni respaldado por la NASA.</p>
+      </article>
+    </main>
+    <nav data-tabs class="relative z-40 grid grid-cols-4 border-t border-titanio/15 bg-night" aria-label="Pantallas"></nav>
+  </section>
+
+  <!-- ==========================================
        LIBRERÍAS JS Y LÓGICA DE LA APLICACIÓN
        ========================================== -->
   <!-- Three.js y OrbitControls para la renderización 3D -->
@@ -812,6 +926,7 @@
     let selectedPlanet = null;
     let pendingSelection = null;
     let solutionsReady = false;
+    const datasetInfo = { confirmed: null, solutions: null };
     const filters = { query: '', method: '', terrestre: false, habitable: false, cercanos: false };
 
     // ----------------------------------------------------
@@ -821,11 +936,13 @@
       inicio: { element: document.getElementById('home-screen'), title: 'Pizza Planet · Exoplanetas de la NASA en 3D' },
       explorar: { element: document.getElementById('viz-screen'), title: 'Explorar 3D · Pizza Planet' },
       comparar: { element: document.getElementById('compare-screen'), title: 'Comparar con la Tierra · Pizza Planet' },
-      tiempo: { element: document.getElementById('timeline-screen'), title: 'Descubrimientos en el tiempo · Pizza Planet' }
+      tiempo: { element: document.getElementById('timeline-screen'), title: 'Descubrimientos en el tiempo · Pizza Planet' },
+      ficha: { element: document.getElementById('ficha-screen'), title: 'Ficha · Pizza Planet' },
+      fuentes: { element: document.getElementById('fuentes-screen'), title: 'Fuentes y metodología · Pizza Planet' }
     };
-    const SHORTCUTS = { '1': '#/', '2': '#/explorar', '3': '#/comparar', '4': '#/tiempo' };
+    const SHORTCUTS = { '1': '#/', '2': '#/explorar', '3': '#/comparar', '4': '#/tiempo', '5': '#/ficha' };
     let timelineActive = false;
-    const PLANET_SCREENS = ['explorar', 'comparar']; // pantallas cuya ruta lleva el planeta seleccionado
+    const PLANET_SCREENS = ['explorar', 'comparar', 'ficha']; // pantallas cuya ruta lleva el planeta seleccionado
     const TABS = [
       { key: 'explorar', label: 'Explorar 3D' },
       { key: 'comparar', label: 'Comparar' },
@@ -887,6 +1004,8 @@
       }
       renderTabs();
       if (target === 'comparar') requestAnimationFrame(() => renderCompare({ animate: true }));
+      if (target === 'ficha') { renderFicha(); SCREENS.ficha.element.querySelector('main').scrollTop = 0; }
+      if (target === 'fuentes') renderFuentes();
     }
 
     document.getElementById('btn-start').addEventListener('click', () => {
@@ -1045,6 +1164,17 @@
         orbit: numeric(record.pl_orbsmax),
         insol,
         eqt: numeric(record.pl_eqt),
+        row: planets.length + 1,
+        radiusErr: [numeric(record.pl_radeerr1), numeric(record.pl_radeerr2)],
+        massErr: [numeric(record.pl_bmasseerr1), numeric(record.pl_bmasseerr2)],
+        eccentricity: numeric(record.pl_orbeccen),
+        starType: record.st_spectype || '',
+        starTemp: numeric(record.st_teff),
+        starRadius: numeric(record.st_rad),
+        starMass: numeric(record.st_mass),
+        starCount: numeric(record.sy_snum),
+        planetCount: numeric(record.sy_pnum),
+        solutions: [],
         distanceLy,
         ra,
         dec,
@@ -1082,8 +1212,8 @@
         solutionsRequest.catch(() => {});
 
         const confirmedText = await confirmedRequest;
-        const confirmedFields = ['pl_name', 'hostname', 'discoverymethod', 'disc_year', 'disc_facility', 'pl_rade', 'pl_bmasse', 'pl_bmassprov', 'pl_orbper', 'pl_orbsmax', 'pl_insol', 'pl_eqt', 'sy_dist', 'ra', 'dec'];
-        readDataset(confirmedText, confirmedFields, (record) => {
+        const confirmedFields = ['pl_name', 'hostname', 'discoverymethod', 'disc_year', 'disc_facility', 'pl_rade', 'pl_radeerr1', 'pl_radeerr2', 'pl_bmasse', 'pl_bmasseerr1', 'pl_bmasseerr2', 'pl_bmassprov', 'pl_orbper', 'pl_orbsmax', 'pl_orbeccen', 'pl_insol', 'pl_eqt', 'st_spectype', 'st_teff', 'st_rad', 'st_mass', 'sy_snum', 'sy_pnum', 'sy_dist', 'ra', 'dec'];
+        datasetInfo.confirmed = readDataset(confirmedText, confirmedFields, (record) => {
           const planet = buildPlanet(record);
           planets.push(planet);
           planetByName.set(planet.name, planet);
@@ -1106,15 +1236,19 @@
 
         stage = 'solutions';
         const solutionsText = await solutionsRequest;
-        const solutionInfo = readDataset(solutionsText, ['pl_name', 'default_flag', 'soltype'], (record) => {
+        const solutionInfo = readDataset(solutionsText, ['pl_name', 'default_flag', 'soltype', 'pl_refname', 'pl_pubdate'], (record) => {
           const planet = planetByName.get(record.pl_name);
           if (!planet) return;
           planet.solutionCount++;
           if (record.default_flag === '1') planet.solutionType = record.soltype;
+          planet.solutions.push({ ...parseReference(record.pl_refname), isDefault: record.default_flag === '1', type: record.soltype, date: record.pl_pubdate || '' });
         });
+        datasetInfo.solutions = solutionInfo;
         solutionsReady = true;
         setDatasetStatus('solutions', 'ready', `${numberFormat.format(solutionInfo.records)} registros`);
         if (selectedPlanet) renderSelected();
+        renderFicha();
+        renderFuentes();
       } catch (error) {
         console.error('Error al cargar los datasets de NASA:', error);
         setDatasetStatus(stage, 'error', 'No se pudo leer el archivo. Abre la página con un servidor local.');
@@ -1358,7 +1492,10 @@
             <div class="data-row"><dt>Método</dt><span class="leader" aria-hidden="true"></span><dd class="flex items-center gap-1.5 text-titanio">${shapeIcon(planet.method)}${escapeHTML(methodLabel(planet.method))}</dd></div>
           </div>
         </dl>
-        <a href="#/comparar/${encodeURIComponent(planet.name)}" class="btn-solid mt-5"><span class="!py-3 !px-4 !text-[0.78rem]">Comparar con la Tierra <svg viewBox="0 0 16 16" class="w-3.5 h-3.5" aria-hidden="true"><path d="M4 12 L12 4 M5.5 4 H12 V10.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square" /></svg></span></a>
+        <div class="mt-5 flex flex-wrap items-center gap-x-5 gap-y-3">
+          <a href="#/ficha/${encodeURIComponent(planet.name)}" class="btn-solid"><span class="!py-3 !px-4 !text-[0.78rem]">Abrir ficha <svg viewBox="0 0 16 16" class="w-3.5 h-3.5" aria-hidden="true"><path d="M4 12 L12 4 M5.5 4 H12 V10.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square" /></svg></span></a>
+          <a href="#/comparar/${encodeURIComponent(planet.name)}" class="link-wavy text-sm">Comparar con la Tierra</a>
+        </div>
 
         <div class="sel-extra">
           <div class="mt-5 pt-4 border-t border-titanio/15">
@@ -1395,6 +1532,7 @@
       renderTabs();
       renderCompare({ animate: true });
       renderTimelineSelected();
+      renderFicha();
     }
 
     // ----------------------------------------------------
@@ -2100,6 +2238,7 @@
         <p class="mt-1 text-sm text-titanio/75">${escapeHTML(status)} · ${escapeHTML(methodLabel(planet.method))}</p>
         <div class="mt-3 flex flex-wrap gap-x-5 gap-y-2 font-mono text-xs uppercase tracking-[0.14em]">
           ${planet.year !== null && planet.year !== timelineYear ? `<button type="button" data-tl-goto="${planet.year}" class="text-cian hover:text-titanio">Ir a ${planet.year}</button>` : ''}
+          <a href="#/ficha/${encodeURIComponent(planet.name)}" class="text-cian hover:text-titanio">Ficha</a>
           <a href="#/explorar/${encodeURIComponent(planet.name)}" class="text-cian hover:text-titanio">Ver en el mapa</a>
           <a href="#/comparar/${encodeURIComponent(planet.name)}" class="text-cian hover:text-titanio">Comparar</a>
         </div>`;
@@ -2142,6 +2281,192 @@
       timelineHistogram.addEventListener('pointermove', move);
       timelineHistogram.addEventListener('pointerup', up);
     });
+
+    // ----------------------------------------------------
+    // 6c. FICHA CIENTÍFICA Y FUENTES
+    // ----------------------------------------------------
+    // pl_refname trae un enlace HTML del archivo: se extraen el texto y la URL, nunca se inserta el HTML crudo
+    function parseReference(html) {
+      const text = (html.match(/>([^<]+)<\/a>/) || [])[1] || html.replace(/<[^>]*>/g, '').trim();
+      const href = (html.match(/href=["']?(https:\/\/[^\s"'>]+)/) || [])[1] || '';
+      return { ref: text || 'Referencia sin nombre', href };
+    }
+    const SOLUTION_TYPES = {
+      'Published Confirmed': 'Publicada · confirmado',
+      'Published Candidate': 'Publicada · candidato',
+      'TESS Project Candidate': 'Candidato del proyecto TESS'
+    };
+    const solutionLabel = (type) => SOLUTION_TYPES[type] || type.replace('Kepler Project Candidate', 'Candidato del proyecto Kepler');
+
+    const fichaBody = document.getElementById('ficha-body');
+    const NO_DATA = '<span class="text-titanio/55">sin dato</span>';
+
+    function errorText(errors, digits) {
+      const [plus, minus] = errors || [];
+      if (plus === null || plus === undefined || minus === null || minus === undefined) return '';
+      return `<span class="err" title="Incertidumbre superior e inferior">+${fmt(Math.abs(plus), digits + 1)} / ${MINUS}${fmt(Math.abs(minus), digits + 1)}</span>`;
+    }
+    function fichaRow(label, value, unitText = '', { digits = 2, calculated = false, errors = null, text = null } = {}) {
+      let content;
+      if (text !== null) content = text ? `<span class="text-titanio">${escapeHTML(text)}</span>` : NO_DATA;
+      else if (value === null || value === undefined) content = NO_DATA;
+      else content = `${calculated ? '<span class="text-cian" title="Calculado, no medido">≈ </span>' : ''}<span class="text-titanio">${fmt(value, digits)}</span>${unitText ? ` <span class="text-titanio/65 text-xs">${unitText}</span>` : ''}${errorText(errors, digits)}`;
+      return `<div class="data-row"><dt>${label}</dt><span class="leader" aria-hidden="true"></span><dd class="font-mono tabular text-sm">${content}</dd></div>`;
+    }
+    function fichaIllustration(planet) {
+      const kind = sizeClass(planet.radius);
+      const sizes = { 'Rocoso': 62, 'Mini-Neptuno': 82, 'Tipo Neptuno': 100, 'Gigante gaseoso': 118 };
+      if (!kind) {
+        return `<svg viewBox="0 0 320 320" class="w-full max-w-[320px] h-auto mx-auto" aria-hidden="true"><circle cx="160" cy="160" r="90" fill="none" stroke="rgba(244,241,232,.45)" stroke-width="2.5" stroke-dasharray="8 8"/><text x="160" y="176" text-anchor="middle" font-family="Orbitron" font-size="46" fill="rgba(244,241,232,.6)">?</text></svg>`;
+      }
+      const r = sizes[kind];
+      const ring = planet.habitableZone
+        ? `<ellipse cx="160" cy="160" rx="${r * 1.7}" ry="${r * 1.7 * 0.25}" transform="rotate(-16 160 160)" fill="none" stroke="#D7FF2F" stroke-width="4" filter="url(#ficha-glow)"/>` : '';
+      return `<svg viewBox="0 0 320 320" class="w-full max-w-[320px] h-auto mx-auto overflow-visible" aria-hidden="true">
+        <defs>
+          <radialGradient id="ficha-body-grad" cx="36%" cy="30%" r="80%"><stop offset="0" stop-color="#3b0f35"/><stop offset=".55" stop-color="#1a0a1d"/><stop offset="1" stop-color="#0b0710"/></radialGradient>
+          <filter id="ficha-glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <clipPath id="ficha-clip"><circle cx="160" cy="160" r="${r - 1}"/></clipPath>
+        </defs>
+        <circle cx="160" cy="160" r="${r}" fill="url(#ficha-body-grad)"/>
+        <g clip-path="url(#ficha-clip)" fill="none" stroke="#FF2DAA" stroke-opacity=".4" stroke-width="2">
+          <ellipse cx="160" cy="${160 - r * 0.5}" rx="${r * 1.3}" ry="${r * 0.13}"/><ellipse cx="160" cy="${160 + r * 0.02}" rx="${r * 1.3}" ry="${r * 0.18}"/><ellipse cx="160" cy="${160 + r * 0.52}" rx="${r * 1.3}" ry="${r * 0.12}"/>
+        </g>
+        <circle cx="160" cy="160" r="${r}" fill="none" stroke="#FF2DAA" stroke-width="3" filter="url(#ficha-glow)"/>
+        ${ring}
+      </svg>`;
+    }
+
+    function renderFicha() {
+      if (currentScreen !== 'ficha' || !selectedPlanet) return;
+      const planet = selectedPlanet;
+      const kind = sizeClass(planet.radius);
+      const temperature = temperatureClass(planet.insol);
+      const enc = encodeURIComponent(planet.name);
+      document.title = `${planet.name} · Ficha · Pizza Planet`;
+      document.getElementById('ficha-header-title').textContent = `Ficha · ${planet.name}`;
+
+      let habitableLine = '';
+      if (planet.habitableZone === true) habitableLine = `Recibe ${fmt(planet.insol, 2)} veces la luz que recibe la Tierra: dentro del rango aproximado de zona habitable (0.25 a 1.5).`;
+      else if (planet.habitableZone === false) habitableLine = `Recibe ${fmt(planet.insol, 2)} veces la luz que recibe la Tierra: fuera del rango aproximado de zona habitable (0.25 a 1.5).`;
+      else habitableLine = 'No sabemos si está en la zona habitable: falta la medición de la luz que recibe.';
+
+      const keyCell = (label, value, note) => `<div class="px-3 sm:px-5 py-4 min-w-0">
+        <dt class="font-mono text-[0.68rem] sm:text-[0.72rem] uppercase tracking-[0.16em] text-cian">${label}</dt>
+        <dd class="mt-2 font-display font-bold text-[clamp(1.2rem,4vw,2.3rem)] leading-none tabular whitespace-nowrap">${value}</dd>
+        <dd class="mt-2 text-xs sm:text-sm text-titanio/65 leading-snug">${note}</dd></div>`;
+      const distance = planet.distanceLy === null ? noData : `${fmt(planet.distanceLy, planet.distanceLy < 10 ? 1 : 0)}${unit('años luz')}`;
+      const size = planet.radius === null ? noData : `${fmt(planet.radius, 2)}${unit('R⊕')}`;
+      const year = planet.year === null ? noData : `${planet.year}`;
+
+      const massKind = planet.massCalculated ? 'estimada a partir del radio' : /sin/i.test(planet.massProvenance) ? 'masa mínima' : planet.mass === null ? '' : 'medida';
+      const gravity = planet.mass !== null && planet.radius !== null ? planet.mass / planet.radius ** 2 : null;
+      const solutions = planet.solutions.slice().sort((a, b) => (b.isDefault - a.isDefault) || b.date.localeCompare(a.date));
+      const solutionList = !solutionsReady
+        ? '<p class="text-sm text-titanio/65">Cargando las soluciones publicadas (PS)…</p>'
+        : !solutions.length
+          ? '<p class="text-sm text-titanio/65">No hay soluciones relacionadas en PS.</p>'
+          : `<ul class="space-y-2">${solutions.slice(0, 8).map((solution) => `
+              <li class="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5 text-sm">
+                <span>${solution.href ? `<a class="text-cian hover:underline underline-offset-4" href="${escapeHTML(solution.href)}" target="_blank" rel="noopener">${escapeHTML(solution.ref)}</a>` : escapeHTML(solution.ref)}${solution.isDefault ? ' <span class="ml-1 px-1.5 py-0.5 border border-plasma/60 text-plasma font-mono text-[0.65rem] uppercase tracking-[0.12em]">predeterminada</span>' : ''}</span>
+                <span class="font-mono text-xs text-titanio/60">${escapeHTML(solutionLabel(solution.type))}${solution.date ? ` · ${escapeHTML(solution.date)}` : ''}</span>
+              </li>`).join('')}</ul>${solutions.length > 8 ? `<p class="mt-2 font-mono text-xs text-titanio/60">8 de ${numberFormat.format(solutions.length)} soluciones</p>` : ''}`;
+
+      fichaBody.innerHTML = `
+        <div class="grid gap-8 lg:gap-12 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] items-center">
+          <figure class="order-2 lg:order-1">
+            ${fichaIllustration(planet)}
+            <figcaption class="mt-3 text-center font-mono text-[0.7rem] text-titanio/55">Ilustración según su tamaño · no es una imagen real</figcaption>
+          </figure>
+          <div class="order-1 lg:order-2 min-w-0">
+            <h2 class="font-display font-black text-[clamp(2.3rem,7vw,4.6rem)] leading-[0.95] break-words" style="text-shadow: 4px 4px 0 var(--uv)">${escapeHTML(planet.name)}</h2>
+            <p class="mt-4 text-lg text-titanio/85">${escapeHTML([kind ? `Mundo ${kind.toLowerCase()}` : 'Tamaño sin dato', temperature].filter(Boolean).join(' · '))}${kind ? ' <span class="text-titanio/55 text-sm">(clasificación aproximada)</span>' : ''}</p>
+            <p class="mt-3 max-w-[56ch] text-titanio/75 leading-relaxed">${planet.habitableZone ? '<span class="inline-block mr-2 px-2.5 py-1 border border-acido/60 text-acido font-mono text-[0.68rem] uppercase tracking-[0.12em] align-middle">Zona habitable ≈</span>' : ''}${habitableLine}</p>
+            <div class="mt-7 flex flex-wrap items-center gap-x-7 gap-y-4">
+              <a href="#/comparar/${enc}" class="btn-solid"><span>Comparar con la Tierra <svg viewBox="0 0 16 16" class="w-4 h-4" aria-hidden="true"><path d="M4 12 L12 4 M5.5 4 H12 V10.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square" /></svg></span></a>
+              ${planet.year !== null ? `<a href="#/tiempo/${planet.year}" class="link-wavy">Ver en la línea temporal</a>` : ''}
+              ${planet.position ? `<a href="#/explorar/${enc}" class="link-wavy">Ver en el mapa 3D</a>` : '<span class="text-sm text-titanio/60">Sin posición en el mapa</span>'}
+            </div>
+          </div>
+        </div>
+
+        <dl class="mt-10 grid grid-cols-[repeat(3,minmax(0,1fr))] border-y border-titanio/15 divide-x divide-titanio/15">
+          ${keyCell('Distancia', distance, planet.distanceLy === null ? 'la NASA no tiene esta medición' : 'desde el Sol')}
+          ${keyCell('Tamaño', size, planet.radius === null ? 'la NASA no tiene esta medición' : 'radios terrestres')}
+          ${keyCell('Año', year, escapeHTML(methodLabel(planet.method)))}
+        </dl>
+
+        <div class="mt-6 flex flex-wrap gap-x-6 gap-y-2 font-mono text-xs text-titanio/70">
+          <span><span class="text-titanio">123</span> observado (medido y publicado)</span>
+          <span><span class="text-cian">≈ 123</span> calculado</span>
+          <span><span class="text-titanio/55">sin dato</span> desconocido</span>
+          <span><span class="text-titanio/55">+0.1 / ${MINUS}0.1</span> incertidumbre</span>
+        </div>
+
+        <div class="mt-6 grid gap-5 lg:grid-cols-2">
+          <section class="ticket" aria-label="Datos del planeta">
+            <p class="ticket-head"><span>Planeta</span><span class="tabular">Fila #${String(planet.row).padStart(4, '0')} · PSCompPars</span></p>
+            <dl class="ticket-body">
+              ${fichaRow('Radio', planet.radius, 'R⊕', { errors: planet.radiusErr })}
+              ${fichaRow('Masa', planet.mass, 'M⊕', { calculated: planet.massCalculated, errors: planet.massCalculated ? null : planet.massErr })}
+              ${fichaRow('Tipo de masa', null, '', { text: massKind })}
+              ${fichaRow('Gravedad', gravity, 'g', { calculated: true })}
+              ${fichaRow('Período orbital', planet.period, 'días', { digits: planet.period !== null && planet.period < 10 ? 2 : 1 })}
+              ${fichaRow('Distancia a su estrella', planet.orbit, 'UA', { digits: 3 })}
+              ${fichaRow('Excentricidad', planet.eccentricity, '', { digits: 3 })}
+              ${fichaRow('Luz recibida', planet.insol, '× Tierra')}
+              ${fichaRow('Temperatura de equilibrio', planet.eqt, 'K', { digits: 0 })}
+            </dl>
+          </section>
+          <section class="ticket" aria-label="Datos de la estrella y el sistema">
+            <p class="ticket-head"><span>Estrella · ${escapeHTML(planet.host)}</span></p>
+            <dl class="ticket-body">
+              ${fichaRow('Tipo espectral', null, '', { text: planet.starType })}
+              ${fichaRow('Temperatura', planet.starTemp, 'K', { digits: 0 })}
+              ${fichaRow('Radio', planet.starRadius, 'R☉')}
+              ${fichaRow('Masa', planet.starMass, 'M☉')}
+              ${fichaRow('Estrellas en el sistema', planet.starCount, '', { digits: 0 })}
+              ${fichaRow('Planetas en el sistema', planet.planetCount, '', { digits: 0 })}
+              ${fichaRow('Ascensión recta', planet.ra, '°', { digits: 3 })}
+              ${fichaRow('Declinación', planet.dec, '°', { digits: 3 })}
+            </dl>
+          </section>
+          <section class="ticket" aria-label="Descubrimiento">
+            <p class="ticket-head"><span>Descubrimiento</span></p>
+            <dl class="ticket-body">
+              ${fichaRow('Año', null, '', { text: planet.year === null ? '' : String(planet.year) })}
+              <div class="data-row"><dt>Método</dt><span class="leader" aria-hidden="true"></span><dd class="flex items-center gap-1.5 text-sm">${shapeIcon(planet.method)}${escapeHTML(methodLabel(planet.method))}</dd></div>
+              ${fichaRow('Instalación', null, '', { text: planet.facility })}
+            </dl>
+          </section>
+          <section class="ticket" aria-label="Soluciones publicadas">
+            <p class="ticket-head"><span>Soluciones publicadas · PS</span><span class="tabular">${solutionsReady ? numberFormat.format(planet.solutionCount) : '…'}</span></p>
+            <div class="ticket-body">${solutionList}</div>
+          </section>
+        </div>
+
+        <p class="mt-8 flex flex-wrap justify-between gap-4 text-sm text-titanio/65">
+          <span>R⊕ / M⊕: radio y masa de la Tierra · R☉ / M☉: del Sol · UA: distancia Tierra–Sol</span>
+          <a class="text-cian hover:underline underline-offset-4" href="https://exoplanetarchive.ipac.caltech.edu/overview/${enc}" target="_blank" rel="noopener">Fuente: NASA Exoplanet Archive <i class="fa-solid fa-arrow-up-right-from-square text-[0.7em]" aria-hidden="true"></i></a>
+        </p>`;
+    }
+
+    function renderFuentes() {
+      if (datasetInfo.confirmed) {
+        document.querySelector('[data-fuentes="confirmed"]').textContent =
+          `${numberFormat.format(planets.length)} planetas · ${numberFormat.format(systems.size)} sistemas · ${numberFormat.format(datasetInfo.confirmed.headers.length)} columnas`;
+      }
+      if (datasetInfo.solutions) {
+        document.querySelector('[data-fuentes="solutions"]').textContent =
+          `${numberFormat.format(datasetInfo.solutions.records)} registros · ${numberFormat.format(datasetInfo.solutions.headers.length)} columnas`;
+      }
+      const legend = document.getElementById('fuentes-legend');
+      if (!legend.children.length) {
+        legend.innerHTML = Object.keys(METHOD_STYLE).map((method) => `<li class="flex items-center gap-2">${shapeIcon(method)}${escapeHTML(methodLabel(method))}</li>`).join('') +
+          `<li class="flex items-center gap-2">${shapeIcon('Astrometry')}Otros métodos</li>` +
+          '<li class="flex items-center gap-2"><svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><circle cx="6" cy="6" r="4.6" fill="none" stroke="#D7FF2F" stroke-width="1.8"/></svg>Anillo: zona habitable (aproximación)</li>';
+      }
+    }
 
     // ----------------------------------------------------
     // 7. ARRANQUE
