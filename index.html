@@ -352,6 +352,12 @@
     @media (prefers-reduced-motion: reduce) {
       #explore-filters { transition: none !important; }
     }
+
+    /* ===== 03 · Comparar ===== */
+    @media (prefers-reduced-motion: no-preference) {
+      .compare-svg.is-new .compare-body { animation: compare-in 0.55s var(--ease-out) both; transform-box: fill-box; transform-origin: 50% 100%; }
+    }
+    @keyframes compare-in { from { opacity: 0; transform: scale(0.85); } to { opacity: 1; transform: none; } }
   </style>
 </head>
 <body class="w-screen h-screen relative bg-night text-titanio">
@@ -599,7 +605,7 @@
             <input type="checkbox" class="check mt-0.5" data-filter="terrestre">
             <span class="min-w-0">
               <span class="block text-[0.95rem]">Terrestre <span class="font-mono text-xs text-titanio/60 tabular" data-count="terrestre"></span></span>
-              <span class="block text-xs text-titanio/60 leading-snug">Radio de hasta 1,6 veces el de la Tierra</span>
+              <span class="block text-xs text-titanio/60 leading-snug">Radio de hasta 1.6 veces el de la Tierra</span>
             </span>
           </label>
           <label class="filter-row">
@@ -609,7 +615,7 @@
                 <svg viewBox="0 0 12 12" class="w-3 h-3" aria-hidden="true"><circle cx="6" cy="6" r="4.6" fill="none" stroke="#D7FF2F" stroke-width="1.8" /></svg>
                 Zona habitable <span class="font-mono text-xs text-titanio/60 tabular" data-count="habitable"></span>
               </span>
-              <span class="block text-xs text-titanio/60 leading-snug">Recibe de 0,25 a 1,5 veces la luz que recibe la Tierra · aproximación</span>
+              <span class="block text-xs text-titanio/60 leading-snug">Recibe de 0.25 a 1.5 veces la luz que recibe la Tierra · aproximación</span>
             </span>
           </label>
           <label class="filter-row">
@@ -657,12 +663,66 @@
     </div>
 
     <!-- Pestañas -->
-    <nav class="relative z-40 grid grid-cols-4 border-t border-titanio/15 bg-night" aria-label="Pantallas">
-      <a href="#/explorar" class="tab" aria-current="page">Explorar 3D</a>
-      <span class="tab" aria-disabled="true" title="Disponible en el siguiente paso">Comparar</span>
-      <span class="tab" aria-disabled="true" title="Disponible en el siguiente paso">Tiempo</span>
-      <span class="tab" aria-disabled="true" title="Disponible en el siguiente paso">Fuentes</span>
-    </nav>
+    <nav data-tabs class="relative z-40 grid grid-cols-4 border-t border-titanio/15 bg-night" aria-label="Pantallas"></nav>
+  </section>
+
+  <!-- ==========================================
+       03 · COMPARAR (comparar)
+       ========================================== -->
+  <section id="compare-screen" aria-label="Comparar con la Tierra" class="screen screen-hidden absolute inset-0 z-10 bg-night flex flex-col" inert>
+    <header class="relative z-40 flex items-center justify-between gap-4 px-4 sm:px-6 h-14 border-b border-titanio/15 bg-night">
+      <a href="#/" class="flex items-center gap-3" aria-label="Pizza Planet, volver al inicio">
+        <svg viewBox="0 0 40 40" class="w-7 h-7" aria-hidden="true">
+          <circle cx="20" cy="20" r="11" fill="none" stroke="#FF2DAA" stroke-width="2.5" />
+          <path d="M20 20 L25.8 10.6 A11 11 0 0 1 30.3 15.7 Z" fill="#08080C" />
+          <path d="M22 18 L27.8 8.6 A11 11 0 0 1 32.3 13.7 Z" fill="none" stroke="#FF2DAA" stroke-width="2" stroke-linejoin="round" />
+          <ellipse cx="20" cy="20" rx="18" ry="4.5" transform="rotate(-16 20 20)" fill="none" stroke="#D7FF2F" stroke-width="2" />
+        </svg>
+        <span class="font-display font-black tracking-[0.12em] text-sm sm:text-base">PIZZA PLANET</span>
+      </a>
+      <h1 class="hidden md:block font-mono text-xs uppercase tracking-[0.22em] text-titanio/70">Comparar con la Tierra</h1>
+      <div class="flex items-center gap-4">
+        <span class="hidden sm:inline font-mono text-xs tracking-[0.18em] text-titanio/55 tabular" aria-label="Paso 3 de 5">03 / 05</span>
+        <button type="button" data-open-help class="cut w-10 h-10 grid place-items-center bg-titanio/10 hover:bg-titanio/20 font-display font-bold text-sm transition-colors" style="--cut:8px" aria-label="¿Cómo funciona?">?</button>
+      </div>
+    </header>
+
+    <main class="flex-1 min-h-0 overflow-y-auto">
+      <div class="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-10 py-5 lg:py-7 flex flex-col gap-5 min-h-full">
+        <div class="relative z-30">
+          <label for="compare-search" class="label-mono block mb-2">Planeta a comparar</label>
+          <div class="relative">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-titanio/55 text-sm" aria-hidden="true"></i>
+            <input id="compare-search" type="search" class="field" placeholder="Busca un planeta por nombre" autocomplete="off" spellcheck="false" aria-controls="compare-results" aria-expanded="false">
+          </div>
+          <div id="compare-results" class="panel absolute left-0 right-0 top-full mt-1 p-1 max-h-80 overflow-y-auto" style="--cut:10px" hidden></div>
+        </div>
+
+        <div class="panel relative flex-1 min-h-[300px] lg:min-h-[360px] flex flex-col" style="--cut:16px">
+          <div class="flex flex-wrap items-center justify-between gap-3 px-4 pt-3">
+            <p class="label-mono">Misma escala · diámetros reales</p>
+            <label class="flex items-center gap-2 text-sm text-titanio/85 cursor-pointer">
+              <input type="checkbox" id="compare-overlay" class="check"> Superponer contornos
+            </label>
+          </div>
+          <div id="compare-stage" class="relative flex-1 min-h-[230px]" role="img" aria-label="Comparación de tamaños"></div>
+        </div>
+
+        <p id="compare-sentence" class="text-lg sm:text-xl leading-snug max-w-[60ch]" aria-live="polite"></p>
+
+        <dl id="compare-metrics" class="grid grid-cols-3 border-y border-titanio/15 divide-x divide-titanio/15"></dl>
+
+        <div class="flex flex-wrap items-center justify-between gap-x-6 gap-y-4 pb-2">
+          <p id="compare-weight" class="text-sm text-titanio/75 max-w-[52ch]"></p>
+          <div class="flex flex-wrap items-center gap-x-6 gap-y-3">
+            <a id="compare-map-link" class="link-wavy text-base" href="#/explorar">Ver en el mapa 3D</a>
+            <button type="button" id="compare-change" class="font-mono text-sm uppercase tracking-[0.14em] border border-titanio/30 px-4 py-2.5 hover:border-cian hover:text-cian transition-colors">Cambiar planeta</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <nav data-tabs class="relative z-40 grid grid-cols-4 border-t border-titanio/15 bg-night" aria-label="Pantallas"></nav>
   </section>
 
   <!-- ==========================================
@@ -693,9 +753,26 @@
     // ----------------------------------------------------
     const SCREENS = {
       inicio: { element: document.getElementById('home-screen'), title: 'Pizza Planet · Exoplanetas de la NASA en 3D' },
-      explorar: { element: document.getElementById('viz-screen'), title: 'Explorar 3D · Pizza Planet' }
+      explorar: { element: document.getElementById('viz-screen'), title: 'Explorar 3D · Pizza Planet' },
+      comparar: { element: document.getElementById('compare-screen'), title: 'Comparar con la Tierra · Pizza Planet' }
     };
-    const SHORTCUTS = { '1': '#/', '2': '#/explorar' };
+    const SHORTCUTS = { '1': '#/', '2': '#/explorar', '3': '#/comparar' };
+    const PLANET_SCREENS = ['explorar', 'comparar']; // pantallas cuya ruta lleva el planeta seleccionado
+    const TABS = [
+      { key: 'explorar', label: 'Explorar 3D' },
+      { key: 'comparar', label: 'Comparar' },
+      { key: 'tiempo', label: 'Tiempo' },
+      { key: 'fuentes', label: 'Fuentes' }
+    ];
+    function planetHash(screen) {
+      return selectedPlanet && PLANET_SCREENS.includes(screen) ? `#/${screen}/${encodeURIComponent(selectedPlanet.name)}` : `#/${screen}`;
+    }
+    function renderTabs() {
+      const html = TABS.map((tab) => SCREENS[tab.key]
+        ? `<a href="${planetHash(tab.key)}" class="tab"${tab.key === currentScreen ? ' aria-current="page"' : ''}>${tab.label}</a>`
+        : `<span class="tab" aria-disabled="true" title="Disponible en un siguiente paso">${tab.label}</span>`).join('');
+      document.querySelectorAll('nav[data-tabs]').forEach((nav) => { nav.innerHTML = html; });
+    }
     let currentScreen = null;
     let vizActive = false;
 
@@ -714,14 +791,18 @@
       if (vizActive && currentScreen !== 'explorar') resizeRenderer();
       currentScreen = target;
 
-      if (target === 'explorar' && param) {
+      if (PLANET_SCREENS.includes(target) && param) {
         if (planets.length) {
           const planet = planetByName.get(param);
-          if (planet && planet !== selectedPlanet) selectPlanet(planet, { fly: true, updateHash: false });
+          if (planet && planet !== selectedPlanet) selectPlanet(planet, { fly: target === 'explorar', updateHash: false });
         } else {
           pendingSelection = param;
         }
+      } else if (PLANET_SCREENS.includes(target) && selectedPlanet) {
+        history.replaceState(null, '', planetHash(target));
       }
+      renderTabs();
+      if (target === 'comparar') requestAnimationFrame(() => renderCompare({ animate: true }));
     }
 
     document.getElementById('btn-start').addEventListener('click', () => {
@@ -870,6 +951,7 @@
         radius,
         mass: numeric(record.pl_bmasse),
         massCalculated: record.pl_bmassprov === 'M-R relationship',
+        massProvenance: record.pl_bmassprov || '',
         period: numeric(record.pl_orbper),
         orbit: numeric(record.pl_orbsmax),
         insol,
@@ -1156,7 +1238,7 @@
       const classLine = [kind || 'Tamaño sin dato', temperature].filter(Boolean).join(' · ');
       const siblings = (systems.get(planet.host) || []).slice().sort((a, b) => (a.orbit ?? a.period ?? Infinity) - (b.orbit ?? b.period ?? Infinity));
       const badges = [];
-      if (planet.habitableZone) badges.push('<span class="inline-flex items-center gap-1.5 px-2 py-1 border border-acido/60 text-acido font-mono text-[0.7rem] uppercase tracking-[0.12em]" title="Criterio: insolación entre 0,25 y 1,5 veces la terrestre">Zona habitable ≈</span>');
+      if (planet.habitableZone) badges.push('<span class="inline-flex items-center gap-1.5 px-2 py-1 border border-acido/60 text-acido font-mono text-[0.7rem] uppercase tracking-[0.12em]" title="Criterio: insolación entre 0.25 y 1.5 veces la terrestre">Zona habitable ≈</span>');
       if (!planet.position) badges.push('<span class="inline-flex px-2 py-1 border border-titanio/30 text-titanio/75 font-mono text-[0.7rem] uppercase tracking-[0.12em]">Sin posición en el mapa</span>');
 
       const solutions = !solutionsReady
@@ -1186,6 +1268,7 @@
             <div class="data-row"><dt>Método</dt><span class="leader" aria-hidden="true"></span><dd class="flex items-center gap-1.5 text-titanio">${shapeIcon(planet.method)}${escapeHTML(methodLabel(planet.method))}</dd></div>
           </div>
         </dl>
+        <a href="#/comparar/${encodeURIComponent(planet.name)}" class="btn-solid mt-5"><span class="!py-3 !px-4 !text-[0.78rem]">Comparar con la Tierra <svg viewBox="0 0 16 16" class="w-3.5 h-3.5" aria-hidden="true"><path d="M4 12 L12 4 M5.5 4 H12 V10.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square" /></svg></span></a>
 
         <div class="sel-extra">
           <div class="mt-5 pt-4 border-t border-titanio/15">
@@ -1218,8 +1301,201 @@
       renderResults();
       updateSelectionGraphics();
       if (fly && planet.position) flyTo(planet.position, 22);
-      if (updateHash && vizActive) history.replaceState(null, '', `#/explorar/${encodeURIComponent(planet.name)}`);
+      if (updateHash && PLANET_SCREENS.includes(currentScreen)) history.replaceState(null, '', planetHash(currentScreen));
+      renderTabs();
+      renderCompare({ animate: true });
     }
+
+    // ----------------------------------------------------
+    // 5b. COMPARAR CON LA TIERRA (misma escala)
+    // ----------------------------------------------------
+    const compareStage = document.getElementById('compare-stage');
+    const compareSearch = document.getElementById('compare-search');
+    const compareResults = document.getElementById('compare-results');
+    const compareOverlay = document.getElementById('compare-overlay');
+    const MINUS = '−';
+    let lastCompared = null;
+
+    function compareBody(id, cx, baseline, r, color, outlineOnly) {
+      const cy = baseline - r;
+      const bands = outlineOnly ? '' : `
+        <clipPath id="${id}-clip"><circle cx="${cx}" cy="${cy}" r="${r}"/></clipPath>
+        <circle cx="${cx}" cy="${cy}" r="${r}" fill="#130b18"/>
+        <g clip-path="url(#${id}-clip)" fill="none" stroke="${color}" stroke-opacity=".38" stroke-width="${Math.max(1, r * 0.035)}">
+          <ellipse cx="${cx}" cy="${cy - r * 0.45}" rx="${r * 1.3}" ry="${r * 0.13}"/>
+          <ellipse cx="${cx}" cy="${cy + r * 0.08}" rx="${r * 1.3}" ry="${r * 0.17}"/>
+          <ellipse cx="${cx}" cy="${cy + r * 0.56}" rx="${r * 1.3}" ry="${r * 0.11}"/>
+        </g>`;
+      return `<g class="compare-body">${bands}<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="${Math.min(3, Math.max(1.5, r * 0.03))}"/></g>`;
+    }
+
+    function compareSentence(planet) {
+      const name = `<strong class="text-plasma font-medium">${escapeHTML(planet.name)}</strong>`;
+      const ratio = planet.radius;
+      if (ratio === null) return `No podemos comparar el tamaño de ${name}: la NASA no tiene la medición de su radio.`;
+      if (Math.abs(ratio - 1) < 0.03) return `${name} es prácticamente del mismo tamaño que la Tierra.`;
+      if (ratio >= 0.5 && ratio <= 2) {
+        const pct = Math.round(Math.abs(ratio - 1) * 100);
+        return `${name} es un ${pct} % ${ratio > 1 ? 'más ancho' : 'más pequeño'} que la Tierra.`;
+      }
+      return ratio > 1
+        ? `${name} es ${fmt(ratio, 1)} veces más ancho que la Tierra.`
+        : `La Tierra es ${fmt(1 / ratio, 1)} veces más ancha que ${name}.`;
+    }
+
+    function metricCell(label, value, note) {
+      return `<div class="px-3 sm:px-5 py-4 min-w-0">
+        <dt class="font-mono text-[0.68rem] sm:text-[0.72rem] uppercase tracking-[0.16em] text-cian">${label}</dt>
+        <dd class="mt-2 font-display font-bold text-[clamp(1.25rem,4.2vw,2.5rem)] leading-none tabular whitespace-nowrap">${value}</dd>
+        <dd class="mt-2 text-xs sm:text-sm text-titanio/65 leading-snug">${note}</dd>
+      </div>`;
+    }
+    const noData = '<span class="text-titanio/55 font-mono text-[0.6em] font-normal">sin dato</span>';
+    const unit = (text) => `<span class="font-mono text-[0.45em] font-normal text-titanio/65 ml-1">${text}</span>`;
+    const approx = '<span class="text-titanio/60 font-normal" title="Calculado, no medido">≈</span>';
+
+    function renderCompare({ animate = false } = {}) {
+      if (currentScreen !== 'comparar' || !selectedPlanet) return;
+      const planet = selectedPlanet;
+      const radius = planet.radius;
+      // Texto y métricas
+      document.getElementById('compare-sentence').innerHTML = compareSentence(planet);
+      let diameter = noData;
+      let diameterNote = 'sin la medición del radio';
+      if (radius !== null) {
+        if (radius >= 0.5 && radius <= 2) {
+          const pct = Math.round((radius - 1) * 100);
+          diameter = `${pct > 0 ? '+' : pct < 0 ? MINUS : ''}${Math.abs(pct)}${unit('%')}`;
+        } else {
+          diameter = `×${fmt(radius, radius < 1 ? 2 : 1)}`;
+        }
+        diameterNote = `${fmt(radius, 2)} veces el de la Tierra`;
+      }
+      let mass = noData;
+      let massNote = 'la NASA no tiene esta medición';
+      if (planet.mass !== null) {
+        mass = `${planet.massCalculated ? approx + ' ' : ''}${fmt(planet.mass, planet.mass < 10 ? 2 : 0)}${unit('M⊕')}`;
+        massNote = planet.massCalculated ? 'estimada a partir del radio'
+          : /sin/i.test(planet.massProvenance) ? 'masa mínima medida' : 'medida';
+      }
+      let gravity = noData;
+      let gravityNote = 'necesita masa y radio';
+      let gravityValue = null;
+      if (planet.mass !== null && radius !== null) {
+        gravityValue = planet.mass / (radius * radius);
+        gravity = `${approx} ${fmt(gravityValue, gravityValue < 10 ? 2 : 1)}${unit('g')}`;
+        gravityNote = sizeClass(radius) === 'Rocoso' ? 'en la superficie · calculada (M ÷ R²)' : 'a la altura de sus nubes · calculada (M ÷ R²)';
+      }
+      document.getElementById('compare-metrics').innerHTML =
+        metricCell('Diámetro', diameter, diameterNote) + metricCell('Masa', mass, massNote) + metricCell('Gravedad', gravity, gravityNote);
+      document.getElementById('compare-weight').textContent = gravityValue === null ? '' :
+        `Una persona que en la Tierra pesa 60 kg allí pesaría unos ${fmt(60 * gravityValue, 0)} kg${sizeClass(radius) === 'Rocoso' ? '.' : ', si pudiera flotar a la altura de sus nubes.'}`;
+      document.getElementById('compare-map-link').href = `#/explorar/${encodeURIComponent(planet.name)}`;
+      if (document.activeElement !== compareSearch) compareSearch.value = planet.name;
+      drawCompareStage(animate);
+    }
+
+    function drawCompareStage(animate = false) {
+      if (currentScreen !== 'comparar' || !selectedPlanet) return;
+      const planet = selectedPlanet;
+      const width = compareStage.clientWidth;
+      const height = compareStage.clientHeight;
+      if (!width || !height) return;
+      const overlay = compareOverlay.checked;
+      const radius = planet.radius;
+      const baseline = height - 58;
+      const maxR = Math.max(1, radius ?? 1);
+      const maxDiameter = Math.max(40, Math.min(baseline - 18, overlay ? width * 0.62 : width * 0.4));
+      const scale = maxDiameter / (2 * maxR); // píxeles por radio terrestre
+      const earthR = Math.max(scale, 1.5);
+      const planetR = radius === null ? null : radius * scale;
+      const earthX = overlay ? width / 2 : width * 0.27;
+      const planetX = overlay ? width / 2 : width * 0.71;
+      const labelEarthX = overlay ? width / 2 - 70 : earthX;
+      const labelPlanetX = overlay ? width / 2 + 70 : planetX;
+      const parts = [];
+
+      parts.push(`<line x1="16" x2="${width - 16}" y1="${baseline}" y2="${baseline}" stroke="rgba(244,241,232,.3)" stroke-width="1"/>`);
+      if (planetR !== null) {
+        if (overlay && planetR >= earthR) {
+          parts.push(compareBody('cmp-p', planetX, baseline, planetR, '#FF2DAA', true), compareBody('cmp-e', earthX, baseline, earthR, '#28E7F5', true));
+        } else {
+          parts.push(compareBody('cmp-e', earthX, baseline, earthR, '#28E7F5', overlay), compareBody('cmp-p', planetX, baseline, planetR, '#FF2DAA', overlay));
+        }
+        if (planet.habitableZone && !overlay) {
+          parts.push(`<ellipse cx="${planetX}" cy="${baseline - planetR}" rx="${planetR * 1.38}" ry="${planetR * 0.3}" transform="rotate(-14 ${planetX} ${baseline - planetR})" fill="none" stroke="#D7FF2F" stroke-width="2" opacity=".9"/>`);
+        }
+      } else {
+        parts.push(compareBody('cmp-e', earthX, baseline, earthR, '#28E7F5', overlay));
+        const unknownR = Math.min(maxDiameter / 2, 60);
+        parts.push(`<circle cx="${planetX}" cy="${baseline - unknownR}" r="${unknownR}" fill="none" stroke="rgba(244,241,232,.45)" stroke-width="2" stroke-dasharray="6 6"/>
+          <text x="${planetX}" y="${baseline - unknownR + 10}" text-anchor="middle" font-family="Orbitron" font-size="28" fill="rgba(244,241,232,.6)">?</text>`);
+      }
+      if (earthR < 5) {
+        // La Tierra es demasiado pequeña a esta escala: una flecha la señala sin agrandarla
+        const top = baseline - 2 * earthR - 10;
+        parts.push(`<path d="M${earthX - 6} ${top - 10} L${earthX} ${top} L${earthX + 6} ${top - 10}" fill="none" stroke="#28E7F5" stroke-width="2"/>
+          <text x="${earthX}" y="${top - 18}" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#28E7F5">la Tierra, a escala</text>`);
+      }
+      if (!overlay) {
+        parts.push(`<text x="${width / 2}" y="${baseline - Math.min(maxDiameter, 2 * Math.max(earthR, planetR ?? 0)) / 2}" text-anchor="middle" font-family="Orbitron" font-weight="700" font-size="20" fill="rgba(244,241,232,.42)">vs.</text>`);
+      }
+      const radiusText = radius === null ? 'radio: sin dato' : `${fmt(radius, 2)} R⊕`;
+      parts.push(`
+        <text x="${labelEarthX}" y="${baseline + 24}" text-anchor="middle" font-family="Space Grotesk" font-size="15" fill="#F4F1E8">Tierra</text>
+        <text x="${labelEarthX}" y="${baseline + 43}" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="#28E7F5">1 R⊕</text>
+        <text x="${labelPlanetX}" y="${baseline + 24}" text-anchor="middle" font-family="Space Grotesk" font-size="15" fill="#F4F1E8">${escapeHTML(planet.name)}</text>
+        <text x="${labelPlanetX}" y="${baseline + 43}" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="#FF2DAA">${radiusText}</text>`);
+
+      const isNew = animate && lastCompared !== planet;
+      lastCompared = planet;
+      compareStage.innerHTML = `<svg class="compare-svg${isNew ? ' is-new' : ''} absolute inset-0" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" aria-hidden="true">${parts.join('')}</svg>`;
+      compareStage.setAttribute('aria-label', `La Tierra (1 radio terrestre) junto a ${planet.name} (${radiusText}), dibujados a la misma escala.`);
+    }
+    // El SVG es absoluto, así que redibujarlo no cambia el tamaño del escenario (sin bucles)
+    if ('ResizeObserver' in window) new ResizeObserver(() => drawCompareStage()).observe(compareStage);
+
+    function renderCompareResults() {
+      const query = compareSearch.value.trim().toLocaleLowerCase('es');
+      const matches = query ? planets.filter((planet) => planet.name.toLocaleLowerCase('es').includes(query) || planet.host.toLocaleLowerCase('es').includes(query)) : [];
+      compareResults.hidden = !query;
+      compareSearch.setAttribute('aria-expanded', String(Boolean(query)));
+      if (!query) return;
+      compareResults.innerHTML = matches.length
+        ? matches.slice(0, 8).map((planet) => `
+            <button type="button" class="result-btn" data-compare="${escapeHTML(planet.name)}">
+              <span class="block text-[0.95rem]">${escapeHTML(planet.name)}</span>
+              <span class="block font-mono text-xs text-titanio/60">${planet.radius === null ? 'radio: sin dato' : `${fmt(planet.radius, 2)} R⊕ · ${sizeClass(planet.radius)}`}</span>
+            </button>`).join('') + (matches.length > 8 ? `<p class="font-mono text-xs text-titanio/60 px-2 py-1">8 de ${numberFormat.format(matches.length)} coincidencias</p>` : '')
+        : '<p class="text-sm text-titanio/65 px-2 py-2">Ningún planeta o sistema con ese nombre.</p>';
+    }
+    function closeCompareResults() {
+      compareResults.hidden = true;
+      compareSearch.setAttribute('aria-expanded', 'false');
+    }
+    compareSearch.addEventListener('input', renderCompareResults);
+    compareSearch.addEventListener('focus', () => compareSearch.select());
+    compareSearch.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') compareResults.querySelector('[data-compare]')?.click();
+      if (event.key === 'Escape') { closeCompareResults(); compareSearch.blur(); }
+    });
+    compareSearch.addEventListener('blur', () => {
+      setTimeout(() => { if (selectedPlanet && !compareSearch.matches(':focus')) compareSearch.value = selectedPlanet.name; }, 200);
+    });
+    compareResults.addEventListener('pointerdown', (event) => event.preventDefault()); // conserva el foco hasta el clic
+    compareResults.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-compare]');
+      if (!button) return;
+      closeCompareResults();
+      compareSearch.blur();
+      selectPlanet(planetByName.get(button.dataset.compare));
+    });
+    document.addEventListener('pointerdown', (event) => {
+      if (!compareResults.hidden && !event.target.closest('#compare-results, #compare-search')) closeCompareResults();
+    });
+    compareOverlay.addEventListener('change', () => renderCompare());
+    document.getElementById('compare-change').addEventListener('click', () => { compareSearch.focus(); compareSearch.value = ''; renderCompareResults(); });
+    window.addEventListener('resize', () => renderCompare());
 
     // ----------------------------------------------------
     // 6. MOTOR 3D: MAPA ESPACIAL DE EXOPLANETAS
