@@ -2368,7 +2368,7 @@
           ? '<p class="text-sm text-titanio/65">No hay soluciones relacionadas en PS.</p>'
           : `<ul class="space-y-2">${solutions.slice(0, 8).map((solution) => `
               <li class="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5 text-sm">
-                <span>${solution.href ? `<a class="text-cian hover:underline underline-offset-4" href="${escapeHTML(solution.href)}" target="_blank" rel="noopener">${escapeHTML(solution.ref)}</a>` : escapeHTML(solution.ref)}${solution.isDefault ? ' <span class="ml-1 px-1.5 py-0.5 border border-plasma/60 text-plasma font-mono text-[0.65rem] uppercase tracking-[0.12em]">predeterminada</span>' : ''}</span>
+                <span>${solution.href ? `<a class="text-cian hover:underline underline-offset-4" href="${escapeHTML(solution.href)}" target="_blank" rel="noopener">${escapeHTML(solution.ref)}</a>` : escapeHTML(solution.ref)}${solution.isDefault ? ' <span class="ml-1 px-2 py-1 border border-plasma/60 text-plasma font-mono text-[0.65rem] uppercase tracking-[0.12em]">predeterminada</span>' : ''}</span>
                 <span class="font-mono text-xs text-titanio/60">${escapeHTML(solutionLabel(solution.type))}${solution.date ? ` · ${escapeHTML(solution.date)}` : ''}</span>
               </li>`).join('')}</ul>${solutions.length > 8 ? `<p class="mt-2 font-mono text-xs text-titanio/60">8 de ${numberFormat.format(solutions.length)} soluciones</p>` : ''}`;
 
