@@ -1,0 +1,23 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "overused-font",
+        "value": "space grotesk",
+        "createdAt": "2026-11-15T02:53:56.750Z",
+        "reason": "user confirmed: brief pins Orbitron / Space Grotesk / IBM Plex Mono (design/marca-cyber-diner.md)"
+      },
+      {
+        "rule": "marquee",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-11-15T02:53:56.937Z",
+        "reason": "brand doc design/marca-cyber-diner.md pins ticker bands; decorative, aria-hidden, stops under prefers-reduced-motion"
+      }
+    ]
+  }
+}
