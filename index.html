@@ -3,122 +3,382 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pizza Planet - Visualización de Exoplanetas</title>
+  <title>Pizza Planet · Exoplanetas de la NASA en 3D</title>
+  <meta name="description" content="Explora los exoplanetas confirmados del NASA Exoplanet Archive: mapa 3D, comparación con la Tierra, línea del tiempo de descubrimientos y fichas científicas.">
+  <meta name="theme-color" content="#08080C">
+  <!-- Tipografías Cyber Diner: Orbitron (display), Space Grotesk (interfaz), IBM Plex Mono (datos) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Orbitron:wght@500;700;800;900&family=Space+Grotesk:wght@400;500;700&display=swap">
   <!-- Tailwind CSS para estilos rápidos y responsivos -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            night: '#08080C',
+            titanio: '#F4F1E8',
+            plasma: '#FF2DAA',
+            cian: '#28E7F5',
+            acido: '#D7FF2F',
+            uv: '#5021A8'
+          },
+          fontFamily: {
+            display: ['Orbitron', 'sans-serif'],
+            sans: ['"Space Grotesk"', 'system-ui', 'sans-serif'],
+            mono: ['"IBM Plex Mono"', 'ui-monospace', 'monospace']
+          }
+        }
+      }
+    };
+  </script>
   <!-- FontAwesome para iconos de interfaz -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
+
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&display=swap');
-    
-    body {
-      font-family: 'Space Grotesk', sans-serif;
-      background-color: #050714;
-      color: #ffffff;
-      overflow: hidden;
+    /* ===== Cyber Diner: tokens ===== */
+    :root {
+      --night: #08080C;
+      --night-2: #101019;
+      --titanio: #F4F1E8;
+      --plasma: #FF2DAA;
+      --cian: #28E7F5;
+      --acido: #D7FF2F;
+      --uv: #5021A8;
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --cut: 12px;
     }
 
-    /* Animación de entrada y desvanecimiento de pantallas */
+    html { color-scheme: dark; }
+    body {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      background-color: var(--night);
+      color: var(--titanio);
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent;
+    }
+    ::selection { background: var(--plasma); color: var(--night); }
+    :focus-visible { outline: 2px solid var(--cian); outline-offset: 3px; }
+    * { scrollbar-width: thin; scrollbar-color: var(--uv) transparent; }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-thumb { background: var(--uv); }
+    ::-webkit-scrollbar-track { background: transparent; }
+    .tabular { font-variant-numeric: tabular-nums; }
+
+    /* ===== Cambio de pantalla: fundido corto, sin escalado ===== */
     .screen {
-      transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+      transition: opacity 0.35s var(--ease-out), visibility 0s linear 0s;
     }
     .screen-hidden {
       opacity: 0;
+      visibility: hidden;
       pointer-events: none;
-      transform: scale(1.05);
+      transition: opacity 0.25s ease-out, visibility 0s linear 0.25s;
     }
 
-    /* Estilos del planeta estilizado en 2D CSS/SVG de la Home */
-    .planet-glow {
-      box-shadow: 0 0 50px rgba(239, 68, 68, 0.3), inset -20px -20px 40px rgba(0,0,0,0.8);
+    /* ===== Marco técnico: retícula + scanlines (solo en interfaz, nunca sobre datos) ===== */
+    .chrome-grid {
+      background-color: var(--night);
+      background-image:
+        radial-gradient(60% 55% at 28% 48%, rgba(80, 33, 168, 0.30), transparent 70%),
+        linear-gradient(rgba(244, 241, 232, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(244, 241, 232, 0.045) 1px, transparent 1px);
+      background-size: 100% 100%, 48px 48px, 48px 48px;
+    }
+    .scanlines::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.22) 0 1px, transparent 1px 3px);
+      opacity: 0.45;
+      z-index: 1;
     }
 
-    /* Anillo del planeta */
-    .planet-ring {
-      border: 4px solid #ef4444;
-      border-radius: 50%;
-      transform: rotateX(75deg) rotateY(-15deg);
-      box-shadow: 0 0 15px #ef4444;
+    /* Esquinas cortadas en ángulo */
+    .cut {
+      clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, var(--cut) 100%, 0 calc(100% - var(--cut)));
     }
+
+    /* ===== Botón principal: sólido + sombra desplazada ultravioleta ===== */
+    .btn-solid {
+      position: relative;
+      display: inline-flex;
+      isolation: isolate;
+    }
+    .btn-solid::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--uv);
+      transform: translate(6px, 6px);
+      z-index: -1;
+      --cut: 10px;
+      clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, var(--cut) 100%, 0 calc(100% - var(--cut)));
+    }
+    .btn-solid > span {
+      --cut: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.85rem;
+      padding: 1.05rem 1.6rem 1.05rem 1.75rem;
+      background: var(--plasma);
+      color: var(--night);
+      font-family: 'IBM Plex Mono', monospace;
+      font-weight: 600;
+      font-size: 0.95rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, var(--cut) 100%, 0 calc(100% - var(--cut)));
+      transition: transform 0.2s var(--ease-out), background-color 0.2s ease-out;
+    }
+    .btn-solid:hover > span { transform: translate(-2px, -2px); background: #ff52b9; }
+    .btn-solid:active > span { transform: translate(3px, 3px); transition-duration: 0.06s; }
+
+    /* Enlace con subrayado ondulado (boceto) */
+    .link-wavy {
+      color: var(--cian);
+      text-decoration: underline wavy;
+      text-decoration-thickness: 1.5px;
+      text-underline-offset: 7px;
+      text-decoration-color: rgba(40, 231, 245, 0.55);
+      transition: text-decoration-color 0.2s ease-out, color 0.2s ease-out;
+    }
+    .link-wavy:hover { text-decoration-color: var(--cian); color: #7ef2fa; }
+
+    /* ===== Inicio: titular con sombra desplazada e inclinación ===== */
+    .hero-title {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 800;
+      line-height: 0.98;
+      letter-spacing: -0.01em;
+      text-shadow: 4px 4px 0 var(--uv);
+      transform: skewX(-7deg);
+      transform-origin: left bottom;
+      text-wrap: balance;
+    }
+
+    /* Planeta de neón con rebanada */
+    .pp-ring-draw { stroke-dasharray: 1; stroke-dashoffset: 0; }
+    .pp-slice { transform: translate(18px, -18px); transform-box: view-box; }
+    @media (prefers-reduced-motion: no-preference) {
+      .pp-ring-draw { animation: pp-draw 1.4s var(--ease-out) 0.15s both; }
+      .pp-slice { animation: pp-slice-out 0.9s var(--ease-out) 0.7s both; }
+      .ticker-track { animation: ticker 48s linear infinite; }
+      .ds-dot[data-state="loading"] { animation: ds-pulse 1.1s ease-in-out infinite alternate; }
+    }
+    @keyframes pp-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+    @keyframes pp-slice-out { from { transform: translate(0, 0); } to { transform: translate(18px, -18px); } }
+
+    /* Ticker diagonal */
+    .ticker { transform: rotate(-1.6deg); }
+    .ticker-track { display: flex; width: max-content; }
+    @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* Estado de los datasets */
+    .ds-dot { width: 8px; height: 8px; flex: none; background: var(--cian); }
+    .ds-dot[data-state="ready"] { background: var(--cian); box-shadow: 0 0 0 3px rgba(40, 231, 245, 0.18); }
+    .ds-dot[data-state="error"] { background: var(--plasma); }
+    @keyframes ds-pulse { from { opacity: 0.25; } to { opacity: 1; } }
+
+    /* Panel "¿Cómo funciona?" */
+    .help-dialog { max-width: min(36rem, calc(100vw - 2rem)); max-height: calc(100dvh - 2rem); }
+    .help-dialog::backdrop { background: rgba(8, 8, 12, 0.78); backdrop-filter: blur(3px); }
+    @media (prefers-reduced-motion: no-preference) {
+      .help-dialog[open] { animation: help-in 0.35s var(--ease-out); }
+    }
+    @keyframes help-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
   </style>
 </head>
-<body class="w-screen h-screen relative bg-slate-950 text-white">
+<body class="w-screen h-screen relative bg-night text-titanio">
 
   <!-- ==========================================
-       PÁGINA 1: HOME PAGE (Layout Horizontal)
+       01 · INICIO (entender)
        ========================================== -->
-  <section id="home-screen" class="screen absolute inset-0 z-20 flex flex-col justify-between p-8 md:p-12 bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950">
-    
-    <!-- Header principal -->
-    <header class="flex justify-between items-center border-b border-slate-800 pb-4">
-      <h1 class="text-3xl md:text-4xl font-extrabold tracking-widest text-slate-100 uppercase">
-        PIZZA PLANET
-      </h1>
-      <span class="text-xs md:text-sm font-semibold tracking-wider px-3 py-1 bg-indigo-900/50 border border-indigo-500/30 rounded-full text-indigo-300">
-        VISUAL ANALYTICS 2026
-      </span>
-    </header>
+  <section id="home-screen" aria-label="Inicio" class="screen absolute inset-0 z-20 overflow-y-auto overflow-x-hidden chrome-grid scanlines">
+    <div class="relative z-[2] min-h-full flex flex-col">
 
-    <!-- Contenido central horizontal (Dos columnas) -->
-    <main class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center my-auto">
-      
-      <!-- Columna Izquierda: Planeta estilizado (basado en el dibujo) -->
-      <div class="flex justify-center items-center relative py-6">
-        <div class="relative w-56 h-56 md:w-72 md:h-72 flex justify-center items-center">
-          <!-- Cuerpo del planeta -->
-          <div class="w-44 h-44 md:w-56 md:h-56 rounded-full bg-slate-800 border-2 border-slate-600 planet-glow relative overflow-hidden flex items-center justify-center">
-            <!-- Texturas / Líneas del dibujo -->
-            <div class="absolute inset-0 border-t-2 border-b-2 border-slate-600/40 rounded-full scale-90"></div>
-            <div class="absolute inset-0 border-r-2 border-l-2 border-slate-600/30 rounded-full scale-110 rotate-45"></div>
-          </div>
-          <!-- Anillo rojo brillante del boceto -->
-          <div class="planet-ring absolute w-64 h-64 md:w-80 md:h-80 pointer-events-none"></div>
-          <!-- Etiqueta lateral -->
-          <span class="absolute right-0 top-1/4 text-sm font-mono text-red-400 bg-slate-900/80 px-3 py-1 rounded-md border border-red-500/30 shadow-lg">
-            Universo de datos
-          </span>
+      <!-- Barra superior -->
+      <header class="flex items-center justify-between gap-4 px-5 sm:px-8 lg:px-12 h-16 border-b border-titanio/15">
+        <a href="#/" class="flex items-center gap-3 group" aria-label="Pizza Planet, inicio">
+          <svg viewBox="0 0 40 40" class="w-8 h-8" aria-hidden="true">
+            <circle cx="20" cy="20" r="11" fill="none" stroke="#FF2DAA" stroke-width="2.5" />
+            <path d="M20 20 L25.8 10.6 A11 11 0 0 1 30.3 15.7 Z" fill="#08080C" />
+            <path d="M22 18 L27.8 8.6 A11 11 0 0 1 32.3 13.7 Z" fill="none" stroke="#FF2DAA" stroke-width="2" stroke-linejoin="round" />
+            <ellipse cx="20" cy="20" rx="18" ry="4.5" transform="rotate(-16 20 20)" fill="none" stroke="#D7FF2F" stroke-width="2" />
+          </svg>
+          <span class="font-display font-black tracking-[0.12em] text-[0.95rem] sm:text-base">PIZZA PLANET</span>
+        </a>
+        <p class="hidden md:block font-mono text-xs uppercase tracking-[0.22em] text-titanio/65">Inicio</p>
+        <div class="flex items-center gap-4">
+          <span class="hidden sm:inline font-mono text-xs tracking-[0.18em] text-titanio/55 tabular" aria-label="Paso 1 de 5">01 / 05</span>
+          <button type="button" data-open-help class="cut w-10 h-10 grid place-items-center bg-titanio/10 hover:bg-titanio/20 border-0 font-display font-bold text-sm transition-colors" style="--cut:8px" aria-label="¿Cómo funciona?">?</button>
         </div>
-      </div>
+      </header>
 
-      <!-- Columna Derecha: Títulos y Botones de Acción -->
-      <div class="flex flex-col items-center md:items-start text-center md:text-left space-y-6">
-        <div>
-          <h2 class="text-4xl md:text-6xl font-bold tracking-tight text-white mb-2">
-            Una rebanada del universo
-          </h2>
-          <p class="text-lg md:text-xl text-slate-400 font-light tracking-wide">
-            buscar &bull; filtrar &bull; analizar exoplanetas
+      <!-- Contenido central -->
+      <main class="flex-1 grid items-center gap-6 md:gap-10 lg:gap-16 md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] w-full max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 pt-5 pb-8 md:py-12">
+
+        <!-- Planeta de neón con una rebanada separada -->
+        <div class="relative mx-auto w-[min(62vw,250px)] md:w-full md:max-w-[480px]">
+          <svg viewBox="0 0 400 400" class="w-full h-auto overflow-visible" role="img" aria-label="Ilustración de un planeta de neón con una rebanada separada">
+            <defs>
+              <radialGradient id="pp-body" cx="36%" cy="30%" r="80%">
+                <stop offset="0" stop-color="#3b0f35" />
+                <stop offset="0.55" stop-color="#1a0a1d" />
+                <stop offset="1" stop-color="#0b0710" />
+              </radialGradient>
+              <filter id="pp-glow" x="-40%" y="-40%" width="180%" height="180%">
+                <feGaussianBlur stdDeviation="5" result="blur" />
+                <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+              </filter>
+              <clipPath id="pp-clip"><circle cx="200" cy="200" r="117" /></clipPath>
+              <mask id="pp-cut">
+                <rect width="400" height="400" fill="white" />
+                <path d="M200 200 L252.8 86.7 A125 125 0 0 1 313.3 147.2 Z" fill="black" />
+              </mask>
+            </defs>
+
+            <!-- Anillo: mitad trasera -->
+            <g transform="rotate(-16 200 200)">
+              <path class="pp-ring-draw" pathLength="1" d="M10 200 A190 46 0 0 1 390 200" fill="none" stroke="#D7FF2F" stroke-width="4" opacity="0.5" />
+            </g>
+
+            <!-- Cuerpo con la rebanada recortada -->
+            <g mask="url(#pp-cut)">
+              <circle cx="200" cy="200" r="118" fill="url(#pp-body)" />
+              <g clip-path="url(#pp-clip)" fill="none" stroke="#FF2DAA" stroke-width="2" opacity="0.4">
+                <ellipse cx="200" cy="140" rx="150" ry="16" />
+                <ellipse cx="200" cy="198" rx="160" ry="22" />
+                <ellipse cx="200" cy="258" rx="150" ry="15" />
+                <path d="M120 300 Q170 285 215 300" />
+              </g>
+              <circle cx="200" cy="200" r="118" fill="none" stroke="#FF2DAA" stroke-width="3" filter="url(#pp-glow)" />
+              <circle cx="146" cy="232" r="5" fill="#28E7F5" opacity="0.8" />
+              <circle cx="172" cy="118" r="4" fill="#28E7F5" opacity="0.6" />
+            </g>
+
+            <!-- La rebanada: los puntos cian son datos -->
+            <g class="pp-slice">
+              <path d="M200 200 L250.7 91.2 A120 120 0 0 1 308.8 149.3 Z" fill="url(#pp-body)" stroke="#FF2DAA" stroke-width="3" stroke-linejoin="round" filter="url(#pp-glow)" />
+              <path d="M250.7 91.2 A120 120 0 0 1 308.8 149.3" fill="none" stroke="#FF2DAA" stroke-width="7" stroke-linecap="round" />
+              <circle cx="242" cy="158" r="6.5" fill="#28E7F5" filter="url(#pp-glow)" />
+              <circle cx="255" cy="122" r="6" fill="#28E7F5" filter="url(#pp-glow)" />
+              <circle cx="277" cy="150" r="5.5" fill="#28E7F5" filter="url(#pp-glow)" />
+            </g>
+
+            <!-- Anillo: mitad delantera + luna cian -->
+            <g transform="rotate(-16 200 200)">
+              <path class="pp-ring-draw" pathLength="1" d="M390 200 A190 46 0 0 1 10 200" fill="none" stroke="#D7FF2F" stroke-width="5" filter="url(#pp-glow)" />
+              <circle cx="38" cy="222" r="8" fill="#28E7F5" filter="url(#pp-glow)" />
+            </g>
+          </svg>
+          <p class="absolute right-0 top-[4%] md:-right-2 flex items-center gap-2 font-mono text-[0.72rem] uppercase tracking-[0.18em] text-cian" aria-hidden="true">
+            <span class="block w-6 h-px bg-cian"></span>universo de datos
           </p>
         </div>
 
-        <div class="flex flex-col sm:flex-row gap-4 items-center w-full md:w-auto">
-          <!-- Botón EMPEZAR -->
-          <button id="btn-start" class="w-full sm:w-auto px-8 py-4 bg-white hover:bg-slate-200 text-slate-950 font-bold text-lg rounded-xl shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3 group">
-            EMPEZAR 
-            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
-          </button>
-          
-          <!-- Botón ¿Cómo funciona? -->
-          <button id="btn-how" class="text-indigo-400 hover:text-indigo-300 font-medium text-base underline underline-offset-4 px-4 py-2 hover:bg-indigo-950/30 rounded-lg transition-colors">
-            ¿Cómo funciona?
-          </button>
-        </div>
-      </div>
-    </main>
+        <!-- Titular y acciones -->
+        <div class="flex flex-col items-start text-left">
+          <h1 class="hero-title text-[clamp(2.4rem,5.4vw,4.9rem)] pl-1">
+            <span class="block">Una <span class="text-plasma">rebanada</span></span>
+            <span class="block">del universo</span>
+          </h1>
+          <p class="mt-5 md:mt-7 font-mono text-[0.74rem] sm:text-base uppercase tracking-[0.08em] sm:tracking-[0.2em] text-titanio">
+            explora <span class="text-titanio/60">·</span> compara <span class="text-titanio/60">·</span> viaja en el tiempo
+          </p>
+          <p class="mt-4 max-w-[44ch] text-base sm:text-lg leading-relaxed text-titanio/85">
+            <span id="hero-count">Los</span> exoplanetas confirmados del NASA Exoplanet Archive, ubicados en un mapa 3D que puedes recorrer, filtrar y comparar con la Tierra.
+          </p>
 
-    <!-- Footer: Datasets -->
-    <footer class="border-t border-slate-800/80 pt-4 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-400 gap-2">
-      <div class="flex items-center gap-3">
-        <span class="font-bold text-red-400 text-sm">Datasets:</span>
-        <div class="flex gap-2">
-          <span class="px-2 py-1 bg-slate-900 border border-slate-800 rounded font-mono">PSCompPars</span>
-          <span class="px-2 py-1 bg-slate-900 border border-slate-800 rounded font-mono">PS · Soluciones</span>
+          <div class="mt-7 md:mt-9 flex flex-wrap items-center gap-x-8 gap-y-5">
+            <button id="btn-start" type="button" class="btn-solid">
+              <span>Empezar <svg viewBox="0 0 16 16" class="w-4 h-4" aria-hidden="true"><path d="M4 12 L12 4 M5.5 4 H12 V10.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square" /></svg></span>
+            </button>
+            <button id="btn-how" type="button" data-open-help class="link-wavy text-base sm:text-lg font-medium py-2">
+              ¿Cómo funciona?
+            </button>
+          </div>
+        </div>
+      </main>
+
+      <!-- Ticker diagonal -->
+      <div class="ticker -mx-6 bg-plasma text-night py-2 overflow-hidden select-none" aria-hidden="true">
+        <div class="ticker-track font-mono text-xs sm:text-sm font-semibold uppercase tracking-[0.24em] whitespace-nowrap">
+          <span class="pr-6">// Planet // Pizza // <span data-ticker-count>Exoplanetas confirmados</span> // NASA Exoplanet Archive // Datos del 12 nov 2026 // Planet // Pizza // <span data-ticker-count>Exoplanetas confirmados</span> // NASA Exoplanet Archive // Datos del 12 nov 2026 </span>
+          <span class="pr-6">// Planet // Pizza // <span data-ticker-count>Exoplanetas confirmados</span> // NASA Exoplanet Archive // Datos del 12 nov 2026 // Planet // Pizza // <span data-ticker-count>Exoplanetas confirmados</span> // NASA Exoplanet Archive // Datos del 12 nov 2026 </span>
         </div>
       </div>
-      <p class="text-slate-500">NASA Exoplanet Archive · datos locales</p>
-    </footer>
+
+      <!-- Pie: fuentes de datos con estado de carga en vivo -->
+      <footer class="px-5 sm:px-8 lg:px-12 pt-8 pb-6 grid gap-5 md:grid-cols-[auto_1fr_auto] md:items-end border-t border-titanio/10 mt-3 bg-night/70">
+        <p class="font-mono text-xs uppercase tracking-[0.22em] text-plasma md:pb-1">Fuentes de datos</p>
+        <ul class="grid gap-4 sm:grid-cols-2 max-w-3xl">
+          <li class="flex gap-3">
+            <span class="ds-dot mt-1.5" data-ds-dot="confirmed" data-state="loading" aria-hidden="true"></span>
+            <div class="min-w-0">
+              <p class="font-mono text-sm font-medium text-titanio">PSCompPars <span class="text-titanio/60 font-normal">· catálogo</span></p>
+              <p class="text-sm text-titanio/70">Una fila por planeta confirmado</p>
+              <p class="font-mono text-xs text-cian tabular mt-1" data-ds-meta="confirmed" role="status">Cargando…</p>
+            </div>
+          </li>
+          <li class="flex gap-3">
+            <span class="ds-dot mt-1.5" data-ds-dot="solutions" data-state="loading" aria-hidden="true"></span>
+            <div class="min-w-0">
+              <p class="font-mono text-sm font-medium text-titanio">PS <span class="text-titanio/60 font-normal">· soluciones</span></p>
+              <p class="text-sm text-titanio/70">Varias mediciones publicadas por planeta</p>
+              <p class="font-mono text-xs text-cian tabular mt-1" data-ds-meta="solutions" role="status">Cargando…</p>
+            </div>
+          </li>
+        </ul>
+        <div class="text-sm text-titanio/70 md:text-right">
+          <a href="https://exoplanetarchive.ipac.caltech.edu/" target="_blank" rel="noopener" class="text-cian hover:underline underline-offset-4">NASA Exoplanet Archive <i class="fa-solid fa-arrow-up-right-from-square text-[0.7em]" aria-hidden="true"></i></a>
+          <p class="font-mono text-xs tracking-[0.12em] mt-1">Exportado el 12 nov 2026</p>
+        </div>
+      </footer>
+    </div>
   </section>
+
+  <!-- Panel "¿Cómo funciona?" -->
+  <dialog id="help-dialog" class="help-dialog cut p-0 bg-[#101019] text-titanio" style="--cut:16px" aria-labelledby="help-title">
+    <div class="p-6 sm:p-8">
+      <div class="flex items-start justify-between gap-6">
+        <h2 id="help-title" class="font-display font-bold text-xl sm:text-2xl tracking-wide">Cómo funciona</h2>
+        <button type="button" data-close-help class="w-10 h-10 -mt-2 -mr-2 grid place-items-center text-titanio/70 hover:text-titanio" aria-label="Cerrar">
+          <i class="fa-solid fa-xmark text-lg" aria-hidden="true"></i>
+        </button>
+      </div>
+      <p class="mt-2 text-titanio/75">Un recorrido en cinco pasos por los exoplanetas que la NASA ha confirmado.</p>
+      <ol class="mt-6 space-y-4">
+        <li class="grid grid-cols-[2.5rem_1fr] gap-x-3">
+          <span class="font-mono text-sm text-plasma tabular pt-0.5">01</span>
+          <div><p class="font-medium">Entender</p><p class="text-sm text-titanio/70">Qué datos usamos y de dónde vienen.</p></div>
+        </li>
+        <li class="grid grid-cols-[2.5rem_1fr] gap-x-3">
+          <span class="font-mono text-sm text-plasma tabular pt-0.5">02</span>
+          <div><p class="font-medium">Explorar en 3D</p><p class="text-sm text-titanio/70">Cada punto es un planeta, ubicado según su posición en el cielo y su distancia a nosotros. Busca por nombre o filtra por cómo se descubrió.</p></div>
+        </li>
+        <li class="grid grid-cols-[2.5rem_1fr] gap-x-3">
+          <span class="font-mono text-sm text-plasma tabular pt-0.5">03</span>
+          <div><p class="font-medium">Comparar</p><p class="text-sm text-titanio/70">Pon un planeta junto a la Tierra, a la misma escala.</p></div>
+        </li>
+        <li class="grid grid-cols-[2.5rem_1fr] gap-x-3">
+          <span class="font-mono text-sm text-plasma tabular pt-0.5">04</span>
+          <div><p class="font-medium">Viajar en el tiempo</p><p class="text-sm text-titanio/70">Mira cómo crecen los descubrimientos año a año desde 1992.</p></div>
+        </li>
+        <li class="grid grid-cols-[2.5rem_1fr] gap-x-3">
+          <span class="font-mono text-sm text-plasma tabular pt-0.5">05</span>
+          <div><p class="font-medium">Profundizar</p><p class="text-sm text-titanio/70">La ficha de cada planeta. Si la NASA no tiene una medición, verás «sin dato», nunca un cero.</p></div>
+        </li>
+      </ol>
+      <div class="mt-7 pt-5 border-t border-titanio/15 flex flex-wrap items-center justify-between gap-4">
+        <p class="font-mono text-xs text-titanio/60 tracking-wide">Atajos: <kbd class="text-titanio">1</kbd>–<kbd class="text-titanio">5</kbd> pantallas · <kbd class="text-titanio">?</kbd> ayuda</p>
+        <button type="button" data-close-help class="font-mono text-sm uppercase tracking-[0.16em] text-cian hover:text-titanio">Entendido</button>
+      </div>
+    </div>
+  </dialog>
 
 
   <!-- ==========================================
@@ -201,27 +461,59 @@
     // ----------------------------------------------------
     // 1. MANEJO DE NAVEGACIÓN ENTRE PÁGINAS (SPA)
     // ----------------------------------------------------
-    const homeScreen = document.getElementById('home-screen');
-    const vizScreen = document.getElementById('viz-screen');
-    const btnStart = document.getElementById('btn-start');
-    const btnBack = document.getElementById('btn-back');
+    // Rutas con hash: el botón Atrás del navegador funciona y los enlaces se pueden compartir.
+    const SCREENS = {
+      inicio: { element: document.getElementById('home-screen'), title: 'Pizza Planet · Exoplanetas de la NASA en 3D' },
+      explorar: { element: document.getElementById('viz-screen'), title: 'Explorar 3D · Pizza Planet' }
+    };
+    const SHORTCUTS = { '1': '#/', '2': '#/explorar' };
+    let currentScreen = null;
+    let vizActive = false;
 
-    // Inicialmente vizScreen oculto en CSS
-    vizScreen.classList.add('screen-hidden');
+    function route() {
+      const key = location.hash.replace(/^#\/?/, '').split('/')[0] || 'inicio';
+      const target = SCREENS[key] ? key : 'inicio';
+      for (const [name, screen] of Object.entries(SCREENS)) {
+        const active = name === target;
+        screen.element.classList.toggle('screen-hidden', !active);
+        screen.element.inert = !active;
+      }
+      document.title = SCREENS[target].title;
+      vizActive = target === 'explorar';
+      if (vizActive && currentScreen !== 'explorar') window.dispatchEvent(new Event('resize'));
+      currentScreen = target;
+    }
 
-    btnStart.addEventListener('click', () => {
-      homeScreen.classList.add('screen-hidden');
-      vizScreen.classList.remove('screen-hidden');
+    document.getElementById('btn-start').addEventListener('click', () => { location.hash = '#/explorar'; });
+    document.getElementById('btn-back').addEventListener('click', () => { location.hash = '#/'; });
+
+    // Panel "¿Cómo funciona?" (reemplaza el alert)
+    const helpDialog = document.getElementById('help-dialog');
+    document.querySelectorAll('[data-open-help]').forEach((button) => button.addEventListener('click', () => helpDialog.showModal()));
+    document.querySelectorAll('[data-close-help]').forEach((button) => button.addEventListener('click', () => helpDialog.close()));
+    helpDialog.addEventListener('click', (event) => { if (event.target === helpDialog) helpDialog.close(); });
+
+    // Atajos para la demo
+    document.addEventListener('keydown', (event) => {
+      if (event.metaKey || event.ctrlKey || event.altKey) return;
+      if (event.target.closest('input, select, textarea, [contenteditable]')) return;
+      if (event.key === '?') { helpDialog.open ? helpDialog.close() : helpDialog.showModal(); return; }
+      if (helpDialog.open) return;
+      if (SHORTCUTS[event.key]) location.hash = SHORTCUTS[event.key];
     });
 
-    btnBack.addEventListener('click', () => {
-      vizScreen.classList.add('screen-hidden');
-      homeScreen.classList.remove('screen-hidden');
-    });
+    window.addEventListener('hashchange', route);
+    route();
 
-    document.getElementById('btn-how').addEventListener('click', () => {
-      alert("PIZZA PLANET explora los exoplanetas confirmados del NASA Exoplanet Archive. Busca por planeta o sistema, filtra por método de descubrimiento y selecciona un punto para consultar sus parámetros y soluciones.");
-    });
+    // Estado de cada CSV en el pie de la portada
+    function setDatasetStatus(key, state, text) {
+      document.querySelector(`[data-ds-dot="${key}"]`)?.setAttribute('data-state', state);
+      const meta = document.querySelector(`[data-ds-meta="${key}"]`);
+      if (!meta) return;
+      meta.textContent = text;
+      meta.classList.toggle('text-plasma', state === 'error');
+      meta.classList.toggle('text-cian', state !== 'error');
+    }
 
 
     // ----------------------------------------------------
@@ -340,18 +632,28 @@
     }
 
     async function loadCatalogs() {
+      let stage = 'confirmed';
       try {
-        const [confirmedText, solutionsText] = await Promise.all([
-          fetchCSV(DATA_FILES.confirmed),
-          fetchCSV(DATA_FILES.solutions)
-        ]);
+        // Ambas descargas arrancan en paralelo; el catálogo (4 MB) se procesa en cuanto llega.
+        const confirmedRequest = fetchCSV(DATA_FILES.confirmed);
+        const solutionsRequest = fetchCSV(DATA_FILES.solutions);
+        solutionsRequest.catch(() => {});
+
+        const confirmedText = await confirmedRequest;
         const confirmedFields = ['pl_name', 'hostname', 'discoverymethod', 'disc_year', 'disc_facility', 'pl_rade', 'pl_bmasse', 'pl_orbper', 'sy_dist', 'ra', 'dec'];
         const planetByName = new Map();
         const confirmedInfo = readDataset(confirmedText, confirmedFields, (record) => {
           const planet = buildPlanet(record);
           planetByName.set(planet.name, planet);
         });
+        const planetTotal = numberFormat.format(planetByName.size);
+        const systemTotal = numberFormat.format(new Set([...planetByName.values()].map((planet) => planet.host)).size);
+        setDatasetStatus('confirmed', 'ready', `${planetTotal} planetas · ${systemTotal} sistemas`);
+        document.getElementById('hero-count').textContent = `Los ${planetTotal}`;
+        document.querySelectorAll('[data-ticker-count]').forEach((node) => { node.textContent = `${planetTotal} exoplanetas`; });
 
+        stage = 'solutions';
+        const solutionsText = await solutionsRequest;
         const solutionFields = ['pl_name', 'default_flag', 'soltype'];
         const solutionInfo = readDataset(solutionsText, solutionFields, (record) => {
           const planet = planetByName.get(record.pl_name);
@@ -359,6 +661,7 @@
           planet.solutionCount++;
           if (record.default_flag === '1') planet.solutionType = record.soltype;
         });
+        setDatasetStatus('solutions', 'ready', `${numberFormat.format(solutionInfo.records)} registros`);
 
         planets = [...planetByName.values()].filter((planet) => (
           planet.ra !== null && planet.dec !== null && planet.distanceLy !== null
@@ -382,6 +685,8 @@
         applyFilters();
       } catch (error) {
         console.error('Error al cargar los datasets de NASA:', error);
+        setDatasetStatus(stage, 'error', 'No se pudo leer el archivo. Abre la página con un servidor local.');
+        if (stage === 'confirmed') setDatasetStatus('solutions', 'error', 'No se procesó: falta el catálogo.');
         statusElement.textContent = `${error.message} Abre el proyecto con un servidor local (p. ej. python3 -m http.server).`;
         statusElement.classList.replace('text-indigo-300', 'text-red-300');
         document.getElementById('planet-count').textContent = 'Datos no disponibles';
@@ -649,6 +954,7 @@
 
     function animate() {
       requestAnimationFrame(animate);
+      if (!vizActive) return; // no renderizar el mapa mientras está oculto
 
       const elapsedTime = clock.getElapsedTime();
 
