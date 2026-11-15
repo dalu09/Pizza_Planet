@@ -190,6 +190,167 @@
       .help-dialog[open] { animation: help-in 0.35s var(--ease-out); }
     }
     @keyframes help-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+    /* ===== 02 · Explorar 3D ===== */
+    .panel {
+      --cut: 14px;
+      background: rgba(13, 13, 20, 0.94);
+      border: 1px solid rgba(244, 241, 232, 0.12);
+      clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, var(--cut) 100%, 0 calc(100% - var(--cut)));
+    }
+    .label-mono {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(244, 241, 232, 0.68);
+    }
+    .field {
+      width: 100%;
+      background: var(--night);
+      border: 1px solid rgba(244, 241, 232, 0.22);
+      padding: 0.65rem 0.75rem 0.65rem 2.3rem;
+      font-size: 1rem;
+      color: var(--titanio);
+      transition: border-color 0.15s ease-out, box-shadow 0.15s ease-out;
+    }
+    .field::placeholder { color: rgba(244, 241, 232, 0.5); }
+    .field:focus { outline: none; border-color: var(--cian); box-shadow: 0 0 0 1px var(--cian); }
+    .check {
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      flex: none;
+      display: grid;
+      place-content: center;
+      border: 1.5px solid rgba(244, 241, 232, 0.5);
+      background: transparent;
+      cursor: pointer;
+      transition: background-color 0.15s ease-out, border-color 0.15s ease-out;
+    }
+    .check:checked { background: var(--cian); border-color: var(--cian); }
+    .check:checked::after {
+      content: '';
+      width: 9px;
+      height: 5px;
+      border: 2px solid var(--night);
+      border-top: 0;
+      border-right: 0;
+      transform: translate(0, -1px) rotate(-45deg);
+    }
+    .filter-row { display: flex; gap: 0.7rem; align-items: flex-start; padding: 0.5rem 0.4rem; cursor: pointer; }
+    .filter-row:hover { background: rgba(244, 241, 232, 0.05); }
+    .method-option {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.42rem 0.5rem;
+      cursor: pointer;
+      color: rgba(244, 241, 232, 0.82);
+      transition: background-color 0.15s ease-out;
+    }
+    .method-option:hover { background: rgba(244, 241, 232, 0.06); }
+    .method-option:has(input:checked) { background: rgba(40, 231, 245, 0.12); color: var(--titanio); }
+    .method-option:has(input:focus-visible) { outline: 2px solid var(--cian); outline-offset: -2px; }
+    .method-option .count { margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; color: rgba(244, 241, 232, 0.6); font-variant-numeric: tabular-nums; }
+    .data-row { display: flex; align-items: baseline; gap: 0.5rem; }
+    .data-row dt { color: rgba(244, 241, 232, 0.72); flex: none; }
+    .data-row .leader { flex: 1; min-width: 1rem; border-bottom: 1px dotted rgba(244, 241, 232, 0.28); transform: translateY(-4px); }
+    .data-row dd { text-align: right; }
+    .result-btn { display: block; width: 100%; text-align: left; padding: 0.5rem 0.55rem; transition: background-color 0.15s ease-out; }
+    .result-btn:hover { background: rgba(244, 241, 232, 0.07); }
+    .result-btn[aria-current="true"] { background: rgba(255, 45, 170, 0.14); }
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      background: rgba(13, 13, 20, 0.94);
+      border: 1px solid rgba(244, 241, 232, 0.16);
+      color: var(--titanio);
+      transition: background-color 0.15s ease-out, color 0.15s ease-out;
+    }
+    .icon-btn:hover { background: #1c1c28; color: var(--cian); }
+
+    /* Pestañas: letrero de neón (activa encendida, el resto apagadas) */
+    .tab {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      min-height: 52px;
+      padding: 0 0.5rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(244, 241, 232, 0.6);
+      border-top: 2px solid transparent;
+      transition: color 0.2s ease-out;
+    }
+    a.tab:hover { color: var(--titanio); }
+    .tab[aria-current="page"] {
+      color: var(--plasma);
+      border-top-color: var(--plasma);
+      text-shadow: 0 0 14px rgba(255, 45, 170, 0.55);
+    }
+    .tab[aria-disabled="true"] { color: rgba(244, 241, 232, 0.38); cursor: default; }
+
+    /* Etiquetas y tooltip sobre el lienzo */
+    .map-label {
+      position: absolute;
+      left: 0;
+      top: 0;
+      white-space: nowrap;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      color: rgba(244, 241, 232, 0.55);
+      will-change: transform;
+    }
+    .map-label--selected { color: var(--titanio); font-size: 12px; }
+    .map-tooltip {
+      position: absolute;
+      left: 0;
+      top: 0;
+      pointer-events: none;
+      padding: 0.45rem 0.65rem;
+      background: rgba(16, 16, 25, 0.96);
+      border: 1px solid rgba(244, 241, 232, 0.18);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      line-height: 1.45;
+      white-space: nowrap;
+      z-index: 35;
+    }
+
+    /* Distribución: paneles flotantes en escritorio, hoja inferior en móvil */
+    #explore-filters { position: absolute; left: 1rem; top: 1rem; bottom: 1rem; width: 300px; overflow-y: auto; z-index: 30; }
+    #explore-selected { position: absolute; right: 1rem; top: 1rem; width: 330px; max-height: calc(100% - 2rem); overflow-y: auto; z-index: 30; }
+    @media (max-width: 1023px) {
+      #explore-filters {
+        position: fixed;
+        left: 0;
+        right: 0;
+        top: auto;
+        bottom: 0;
+        width: auto;
+        max-height: 82dvh;
+        z-index: 50;
+        --cut: 0px;
+        transform: translateY(105%);
+        visibility: hidden;
+        transition: transform 0.35s var(--ease-out), visibility 0s linear 0.35s;
+        box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.6);
+      }
+      #explore-filters.is-open { transform: none; visibility: visible; transition: transform 0.35s var(--ease-out); }
+      #explore-selected { left: 0.75rem; right: 0.75rem; top: auto; bottom: 0.75rem; width: auto; max-height: 58%; }
+      #explore-selected:not(.is-expanded) .sel-extra { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #explore-filters { transition: none !important; }
+    }
   </style>
 </head>
 <body class="w-screen h-screen relative bg-night text-titanio">
@@ -382,72 +543,125 @@
 
 
   <!-- ==========================================
-       PÁGINA 2: VISUALIZACIÓN SIMULACIÓN VÍA LÁCTEA 3D
+       02 · EXPLORAR 3D (explorar)
        ========================================== -->
-  <section id="viz-screen" class="screen absolute inset-0 z-10 opacity-100 pointer-events-auto">
-    
-    <!-- Lienzo Three.js para la galaxia en 3D -->
-    <div id="galaxy-container" class="w-full h-full"></div>
+  <section id="viz-screen" aria-label="Explorar 3D" class="screen screen-hidden absolute inset-0 z-10 bg-night flex flex-col" inert>
 
-    <!-- Barra de Navegación Superior -->
-    <nav class="absolute top-0 left-0 right-0 p-6 flex justify-between items-center pointer-events-none z-30">
-      <div class="flex items-center gap-4 pointer-events-auto">
-        <button id="btn-back" class="w-10 h-10 bg-slate-900/80 hover:bg-slate-800 border border-slate-700 text-white rounded-full flex items-center justify-center transition-all shadow-lg">
-          <i class="fa-solid fa-chevron-left"></i>
-        </button>
-        <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center font-bold text-xs">NASA</div>
-          <span class="font-bold tracking-wider text-sm md:text-base">EYES ON EXOPLANETS</span>
-        </div>
+    <!-- Barra superior -->
+    <header class="relative z-40 flex items-center justify-between gap-4 px-4 sm:px-6 h-14 border-b border-titanio/15 bg-night">
+      <a href="#/" class="flex items-center gap-3" aria-label="Pizza Planet, volver al inicio">
+        <svg viewBox="0 0 40 40" class="w-7 h-7" aria-hidden="true">
+          <circle cx="20" cy="20" r="11" fill="none" stroke="#FF2DAA" stroke-width="2.5" />
+          <path d="M20 20 L25.8 10.6 A11 11 0 0 1 30.3 15.7 Z" fill="#08080C" />
+          <path d="M22 18 L27.8 8.6 A11 11 0 0 1 32.3 13.7 Z" fill="none" stroke="#FF2DAA" stroke-width="2" stroke-linejoin="round" />
+          <ellipse cx="20" cy="20" rx="18" ry="4.5" transform="rotate(-16 20 20)" fill="none" stroke="#D7FF2F" stroke-width="2" />
+        </svg>
+        <span class="font-display font-black tracking-[0.12em] text-sm sm:text-base">PIZZA PLANET</span>
+      </a>
+      <h1 class="hidden md:block font-mono text-xs uppercase tracking-[0.22em] text-titanio/70">Explorar 3D · todos los exoplanetas</h1>
+      <div class="flex items-center gap-4">
+        <span class="hidden sm:inline font-mono text-xs tracking-[0.18em] text-titanio/55 tabular" aria-label="Paso 2 de 5">02 / 05</span>
+        <button type="button" data-open-help class="cut w-10 h-10 grid place-items-center bg-titanio/10 hover:bg-titanio/20 font-display font-bold text-sm transition-colors" style="--cut:8px" aria-label="¿Cómo funciona?">?</button>
       </div>
+    </header>
 
-      <div class="hidden md:flex gap-6 text-xs tracking-widest font-semibold text-slate-300 pointer-events-auto">
-        <a href="#" class="hover:text-white transition-colors">HOME</a>
-        <a href="#" class="hover:text-white transition-colors">BROWSE DESTINATIONS</a>
-        <a href="#" class="hover:text-white transition-colors">SPACECRAFT</a>
-        <button class="text-slate-400 hover:text-white"><i class="fa-solid fa-magnifying-glass"></i></button>
-      </div>
-    </nav>
+    <!-- Mapa + paneles -->
+    <div id="map-area" class="relative flex-1 min-h-0 overflow-hidden">
+      <div id="galaxy-container" class="absolute inset-0 cursor-grab active:cursor-grabbing"></div>
+      <div id="map-labels" class="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true"></div>
+      <div id="map-tooltip" class="map-tooltip" hidden></div>
+      <p id="map-status" role="status" class="absolute inset-0 grid place-items-center px-8 text-center font-mono text-sm text-titanio/75 pointer-events-none">Cargando el catálogo de la NASA…</p>
 
-    <!-- Overlay Lateral Izquierdo: Telemetría -->
-    <div class="absolute left-6 top-1/3 z-30 space-y-2 text-slate-300 font-mono text-xs md:text-sm bg-slate-950/80 p-4 rounded-lg border border-slate-800/70 backdrop-blur-sm w-56">
-      <p class="text-slate-400">Catálogo confirmado</p>
-      <p id="planet-count" class="text-xl font-bold text-white">Cargando…</p>
-      <p id="system-count" class="text-slate-400">Conectando con NASA Exoplanet Archive</p>
-      <p id="dataset-status" role="status" class="text-indigo-300 text-[11px]">Leyendo archivos CSV…</p>
-    </div>
-
-    <!-- Overlay Inferior Izquierdo: Título y Datos Galácticos -->
-    <div class="absolute bottom-6 left-6 pointer-events-none z-30 space-y-1">
-      <div class="flex items-center gap-2">
-        <h2 class="text-3xl md:text-4xl font-bold tracking-tight text-white drop-shadow-md">Exoplanetas confirmados</h2>
-        <span class="w-6 h-6 bg-indigo-600/80 rounded-full flex items-center justify-center text-xs text-white"><i class="fa-solid fa-circle-info"></i></span>
-      </div>
-      <p class="text-sm font-mono text-slate-300 tracking-wide drop-shadow">
-        <span id="visible-count" class="text-amber-400 font-bold">—</span> planetas visibles
+      <!-- Nota de escala -->
+      <p class="hidden lg:block absolute top-4 left-1/2 -translate-x-1/2 z-20 font-mono text-[0.72rem] tracking-[0.12em] text-titanio/60 text-center pointer-events-none">
+        Distancia desde el Sol en escala logarítmica · cada anillo está 10 veces más lejos
       </p>
-      <p class="text-[11px] text-slate-400 max-w-md">Posiciones calculadas con coordenadas y distancia del catálogo. La galaxia de fondo es ilustrativa.</p>
-    </div>
 
-    <!-- Overlay Inferior Derecho: Panel de Filtros -->
-    <div class="absolute bottom-6 right-6 z-30 pointer-events-auto bg-slate-900/95 border border-slate-700/80 rounded-xl p-4 shadow-2xl backdrop-blur-md w-72 md:w-80 max-h-[75vh] overflow-y-auto">
-      <span class="text-xs font-bold tracking-wider text-slate-400 uppercase block mb-3">Explorar catálogo</span>
-      <label for="planet-search" class="block text-xs text-slate-300 mb-1">Planeta o sistema</label>
-      <input id="planet-search" type="search" placeholder="Ej. Kepler-22 b" autocomplete="off"
-        class="w-full mb-3 rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-indigo-400">
-      <label for="method-filter" class="block text-xs text-slate-300 mb-1">Método de descubrimiento</label>
-      <select id="method-filter" class="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-400">
-        <option value="">Todos los métodos</option>
-      </select>
-      <p class="text-[10px] text-slate-500 mt-2">El color de cada punto representa su método de descubrimiento.</p>
-      <p id="filter-summary" class="text-[11px] font-mono text-slate-400 mt-3"></p>
-      <div id="planet-results" class="mt-2 space-y-1"></div>
-      <div id="planet-details" class="mt-4 border-t border-slate-700 pt-3 text-xs text-slate-300" aria-live="polite">
-        <p class="text-slate-400">Selecciona un punto del mapa para ver sus datos.</p>
+      <!-- Panel izquierdo (hoja inferior en móvil): búsqueda y filtros -->
+      <aside id="explore-filters" class="panel p-5" aria-label="Buscar y filtrar">
+        <div class="flex items-center justify-between mb-4 lg:hidden">
+          <p class="font-display font-bold text-lg">Buscar y filtrar</p>
+          <button type="button" data-close-filters class="icon-btn" aria-label="Cerrar búsqueda y filtros"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+        </div>
+
+        <label for="planet-search" class="label-mono block mb-2">Planeta o sistema</label>
+        <div class="relative">
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-titanio/55 text-sm" aria-hidden="true"></i>
+          <input id="planet-search" type="search" class="field" placeholder="Ej. TRAPPIST-1 e" autocomplete="off" spellcheck="false" aria-describedby="search-hint">
+        </div>
+        <p id="search-hint" class="sr-only">Escribe para filtrar el mapa y ver coincidencias. Atajo: tecla barra.</p>
+        <div id="planet-results" class="mt-2" aria-live="polite"></div>
+
+        <fieldset class="mt-6">
+          <legend class="label-mono mb-2">Filtros</legend>
+          <label class="filter-row">
+            <input type="checkbox" class="check mt-0.5" data-filter="terrestre">
+            <span class="min-w-0">
+              <span class="block text-[0.95rem]">Terrestre <span class="font-mono text-xs text-titanio/60 tabular" data-count="terrestre"></span></span>
+              <span class="block text-xs text-titanio/60 leading-snug">Radio de hasta 1,6 veces el de la Tierra</span>
+            </span>
+          </label>
+          <label class="filter-row">
+            <input type="checkbox" class="check mt-0.5" data-filter="habitable">
+            <span class="min-w-0">
+              <span class="flex items-center gap-1.5 text-[0.95rem]">
+                <svg viewBox="0 0 12 12" class="w-3 h-3" aria-hidden="true"><circle cx="6" cy="6" r="4.6" fill="none" stroke="#D7FF2F" stroke-width="1.8" /></svg>
+                Zona habitable <span class="font-mono text-xs text-titanio/60 tabular" data-count="habitable"></span>
+              </span>
+              <span class="block text-xs text-titanio/60 leading-snug">Recibe de 0,25 a 1,5 veces la luz que recibe la Tierra · aproximación</span>
+            </span>
+          </label>
+          <label class="filter-row">
+            <input type="checkbox" class="check mt-0.5" data-filter="cercanos">
+            <span class="min-w-0">
+              <span class="block text-[0.95rem]">A menos de 100 años luz <span class="font-mono text-xs text-titanio/60 tabular" data-count="cercanos"></span></span>
+              <span class="block text-xs text-titanio/60 leading-snug">Nuestro vecindario cercano</span>
+            </span>
+          </label>
+        </fieldset>
+
+        <fieldset class="mt-6">
+          <legend class="label-mono mb-2">Método de descubrimiento</legend>
+          <div id="method-options" class="space-y-0.5" role="radiogroup"></div>
+          <p class="mt-2 text-xs text-titanio/60 leading-snug">Color y forma de cada punto indican cómo se descubrió.</p>
+        </fieldset>
+
+        <div class="mt-6 pt-4 border-t border-titanio/15 flex items-center justify-between gap-3">
+          <p id="filter-summary" class="font-mono text-xs text-titanio/70 tabular" role="status"></p>
+          <button type="button" id="clear-filters" class="font-mono text-xs uppercase tracking-[0.14em] text-cian hover:text-titanio" hidden>Limpiar</button>
+        </div>
+      </aside>
+
+      <!-- Panel derecho: planeta seleccionado -->
+      <aside id="explore-selected" class="panel p-5" aria-label="Planeta seleccionado" aria-live="polite">
+        <div id="selected-body">
+          <p class="text-sm text-titanio/70">Haz clic en un punto del mapa o busca un planeta para ver sus datos.</p>
+        </div>
+      </aside>
+
+      <!-- Controles móviles -->
+      <button type="button" id="open-filters" class="lg:hidden absolute top-3 left-3 z-30 icon-btn !w-auto px-3 gap-2 flex items-center font-mono text-xs uppercase tracking-[0.14em]">
+        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Buscar y filtrar <span id="mobile-count" class="text-cian tabular"></span>
+      </button>
+
+      <!-- Controles de cámara -->
+      <div class="absolute z-30 top-3 right-3 lg:top-auto lg:bottom-4 lg:right-[362px] flex lg:flex-col gap-2">
+        <button type="button" class="icon-btn hidden lg:grid" data-zoom="in" aria-label="Acercar"><i class="fa-solid fa-plus" aria-hidden="true"></i></button>
+        <button type="button" class="icon-btn hidden lg:grid" data-zoom="out" aria-label="Alejar"><i class="fa-solid fa-minus" aria-hidden="true"></i></button>
+        <button type="button" class="icon-btn" data-zoom="reset" aria-label="Volver a la vista general"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i></button>
       </div>
-      <p id="solution-summary" class="text-[10px] text-slate-500 mt-3"></p>
+      <p class="hidden lg:block absolute bottom-4 left-[332px] z-20 font-mono text-[0.72rem] leading-relaxed text-titanio/60 pointer-events-none">
+        arrastrar = girar · rueda = acercar · clic derecho = mover<br>clic en un punto = ver sus datos
+      </p>
     </div>
 
+    <!-- Pestañas -->
+    <nav class="relative z-40 grid grid-cols-4 border-t border-titanio/15 bg-night" aria-label="Pantallas">
+      <a href="#/explorar" class="tab" aria-current="page">Explorar 3D</a>
+      <span class="tab" aria-disabled="true" title="Disponible en el siguiente paso">Comparar</span>
+      <span class="tab" aria-disabled="true" title="Disponible en el siguiente paso">Tiempo</span>
+      <span class="tab" aria-disabled="true" title="Disponible en el siguiente paso">Fuentes</span>
+    </nav>
   </section>
 
   <!-- ==========================================
@@ -459,9 +673,23 @@
 
   <script>
     // ----------------------------------------------------
-    // 1. MANEJO DE NAVEGACIÓN ENTRE PÁGINAS (SPA)
+    // 0. ESTADO GLOBAL
     // ----------------------------------------------------
-    // Rutas con hash: el botón Atrás del navegador funciona y los enlaces se pueden compartir.
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const compactLayout = window.matchMedia('(max-width: 1023px)');
+    let planets = [];              // todas las filas de PSCompPars
+    let positioned = [];           // las que tienen RA, Dec y distancia
+    let visiblePlanets = [];       // las que pasan los filtros
+    const planetByName = new Map();
+    const systems = new Map();     // hostname -> planetas del sistema
+    let selectedPlanet = null;
+    let pendingSelection = null;
+    let solutionsReady = false;
+    const filters = { query: '', method: '', terrestre: false, habitable: false, cercanos: false };
+
+    // ----------------------------------------------------
+    // 1. NAVEGACIÓN ENTRE PANTALLAS (rutas con hash)
+    // ----------------------------------------------------
     const SCREENS = {
       inicio: { element: document.getElementById('home-screen'), title: 'Pizza Planet · Exoplanetas de la NASA en 3D' },
       explorar: { element: document.getElementById('viz-screen'), title: 'Explorar 3D · Pizza Planet' }
@@ -471,7 +699,9 @@
     let vizActive = false;
 
     function route() {
-      const key = location.hash.replace(/^#\/?/, '').split('/')[0] || 'inicio';
+      const parts = location.hash.replace(/^#\/?/, '').split('/');
+      const key = parts[0] || 'inicio';
+      const param = parts.length > 1 ? decodeURIComponent(parts.slice(1).join('/')) : '';
       const target = SCREENS[key] ? key : 'inicio';
       for (const [name, screen] of Object.entries(SCREENS)) {
         const active = name === target;
@@ -480,14 +710,24 @@
       }
       document.title = SCREENS[target].title;
       vizActive = target === 'explorar';
-      if (vizActive && currentScreen !== 'explorar') window.dispatchEvent(new Event('resize'));
+      if (vizActive && currentScreen !== 'explorar') resizeRenderer();
       currentScreen = target;
+
+      if (target === 'explorar' && param) {
+        if (planets.length) {
+          const planet = planetByName.get(param);
+          if (planet && planet !== selectedPlanet) selectPlanet(planet, { fly: true, updateHash: false });
+        } else {
+          pendingSelection = param;
+        }
+      }
     }
 
-    document.getElementById('btn-start').addEventListener('click', () => { location.hash = '#/explorar'; });
-    document.getElementById('btn-back').addEventListener('click', () => { location.hash = '#/'; });
+    document.getElementById('btn-start').addEventListener('click', () => {
+      location.hash = selectedPlanet ? `#/explorar/${encodeURIComponent(selectedPlanet.name)}` : '#/explorar';
+    });
 
-    // Panel "¿Cómo funciona?" (reemplaza el alert)
+    // Panel "¿Cómo funciona?"
     const helpDialog = document.getElementById('help-dialog');
     document.querySelectorAll('[data-open-help]').forEach((button) => button.addEventListener('click', () => helpDialog.showModal()));
     document.querySelectorAll('[data-close-help]').forEach((button) => button.addEventListener('click', () => helpDialog.close()));
@@ -496,14 +736,18 @@
     // Atajos para la demo
     document.addEventListener('keydown', (event) => {
       if (event.metaKey || event.ctrlKey || event.altKey) return;
+      if (event.key === 'Escape' && filtersPanel.classList.contains('is-open')) { closeFilters(); return; }
       if (event.target.closest('input, select, textarea, [contenteditable]')) return;
       if (event.key === '?') { helpDialog.open ? helpDialog.close() : helpDialog.showModal(); return; }
       if (helpDialog.open) return;
+      if (event.key === '/' && vizActive) {
+        event.preventDefault();
+        if (compactLayout.matches) openFilters();
+        searchInput.focus();
+        return;
+      }
       if (SHORTCUTS[event.key]) location.hash = SHORTCUTS[event.key];
     });
-
-    window.addEventListener('hashchange', route);
-    route();
 
     // Estado de cada CSV en el pie de la portada
     function setDatasetStatus(key, state, text) {
@@ -515,23 +759,22 @@
       meta.classList.toggle('text-cian', state !== 'error');
     }
 
-
     // ----------------------------------------------------
-    // 2. CARGA Y EXPLORACIÓN DE LOS DATASETS DE NASA
+    // 2. CARGA DE LOS DATASETS DE NASA
     // ----------------------------------------------------
     const DATA_FILES = {
       confirmed: './data/PSCompPars_2026.11.12_16.30.57.csv',
       solutions: './data/PS_2026.11.12_16.32.23.csv'
     };
     const numberFormat = new Intl.NumberFormat('es-MX');
-    const statusElement = document.getElementById('dataset-status');
-    const methodFilter = document.getElementById('method-filter');
-    const searchInput = document.getElementById('planet-search');
-    const planetDetails = document.getElementById('planet-details');
-    let planets = [];
-    let visiblePlanets = [];
-    let planetPoints;
-    let maxDistanceLy = 1;
+    const formatters = {};
+    function fmt(value, digits = 2) {
+      formatters[digits] ||= new Intl.NumberFormat('es-MX', { maximumFractionDigits: digits });
+      return formatters[digits].format(value);
+    }
+    function escapeHTML(text) {
+      return String(text).replace(/[&<>"']/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character]));
+    }
 
     function parseCSV(text, onRow) {
       let offset = 0;
@@ -580,15 +823,16 @@
 
     function readDataset(text, fields, onRecord) {
       let headers;
+      let indexes;
       let records = 0;
       parseCSV(text, (row) => {
         if (!headers) {
           headers = row;
+          indexes = fields.map((field) => [field, headers.indexOf(field)]);
           return;
         }
         const record = {};
-        for (const field of fields) {
-          const index = headers.indexOf(field);
+        for (const [field, index] of indexes) {
           if (index !== -1) record[field] = row[index] || '';
         }
         onRecord(record);
@@ -600,29 +844,55 @@
 
     function numeric(value) {
       const parsed = Number(value);
-      return value !== '' && Number.isFinite(parsed) ? parsed : null;
+      return value !== '' && value !== undefined && Number.isFinite(parsed) ? parsed : null;
+    }
+
+    // Escala logarítmica: cada anillo (10, 100, 1.000, 10.000 años luz) queda a la misma separación.
+    const LOG_SCALE = 60;
+    function mapRadius(distanceLy) {
+      return LOG_SCALE * Math.log10(Math.max(distanceLy, 1));
     }
 
     function buildPlanet(record) {
       const distancePc = numeric(record.sy_dist);
+      const radius = numeric(record.pl_rade);
+      const insol = numeric(record.pl_insol);
       const ra = numeric(record.ra);
       const dec = numeric(record.dec);
       const distanceLy = distancePc === null ? null : distancePc * 3.26156;
-      return {
+      const planet = {
         name: record.pl_name,
         host: record.hostname,
-        method: record.discoverymethod || 'Sin dato',
+        method: record.discoverymethod || '',
         year: numeric(record.disc_year),
-        facility: record.disc_facility,
-        radius: numeric(record.pl_rade),
+        facility: record.disc_facility || '',
+        radius,
         mass: numeric(record.pl_bmasse),
+        massCalculated: record.pl_bmassprov === 'M-R relationship',
         period: numeric(record.pl_orbper),
+        orbit: numeric(record.pl_orbsmax),
+        insol,
+        eqt: numeric(record.pl_eqt),
         distanceLy,
         ra,
         dec,
+        terrestrial: radius === null ? null : radius <= 1.6,
+        habitableZone: insol === null ? null : insol >= 0.25 && insol <= 1.5,
+        position: null,
         solutionType: '',
         solutionCount: 0
       };
+      if (ra !== null && dec !== null && distanceLy !== null) {
+        const r = mapRadius(distanceLy);
+        const raRad = THREE.MathUtils.degToRad(ra);
+        const decRad = THREE.MathUtils.degToRad(dec);
+        planet.position = new THREE.Vector3(
+          r * Math.cos(decRad) * Math.cos(raRad),
+          r * Math.sin(decRad),
+          r * Math.cos(decRad) * Math.sin(raRad)
+        );
+      }
+      return planet;
     }
 
     async function fetchCSV(path) {
@@ -640,341 +910,702 @@
         solutionsRequest.catch(() => {});
 
         const confirmedText = await confirmedRequest;
-        const confirmedFields = ['pl_name', 'hostname', 'discoverymethod', 'disc_year', 'disc_facility', 'pl_rade', 'pl_bmasse', 'pl_orbper', 'sy_dist', 'ra', 'dec'];
-        const planetByName = new Map();
-        const confirmedInfo = readDataset(confirmedText, confirmedFields, (record) => {
+        const confirmedFields = ['pl_name', 'hostname', 'discoverymethod', 'disc_year', 'disc_facility', 'pl_rade', 'pl_bmasse', 'pl_bmassprov', 'pl_orbper', 'pl_orbsmax', 'pl_insol', 'pl_eqt', 'sy_dist', 'ra', 'dec'];
+        readDataset(confirmedText, confirmedFields, (record) => {
           const planet = buildPlanet(record);
+          planets.push(planet);
           planetByName.set(planet.name, planet);
+          if (!systems.has(planet.host)) systems.set(planet.host, []);
+          systems.get(planet.host).push(planet);
         });
-        const planetTotal = numberFormat.format(planetByName.size);
-        const systemTotal = numberFormat.format(new Set([...planetByName.values()].map((planet) => planet.host)).size);
-        setDatasetStatus('confirmed', 'ready', `${planetTotal} planetas · ${systemTotal} sistemas`);
+        positioned = planets.filter((planet) => planet.position);
+
+        const planetTotal = numberFormat.format(planets.length);
+        setDatasetStatus('confirmed', 'ready', `${planetTotal} planetas · ${numberFormat.format(systems.size)} sistemas`);
         document.getElementById('hero-count').textContent = `Los ${planetTotal}`;
         document.querySelectorAll('[data-ticker-count]').forEach((node) => { node.textContent = `${planetTotal} exoplanetas`; });
 
+        buildFilterControls();
+        applyFilters();
+        const initial = (pendingSelection && planetByName.get(pendingSelection)) || planetByName.get('TRAPPIST-1 e') || positioned[0];
+        selectPlanet(initial, { fly: Boolean(pendingSelection), updateHash: false });
+        pendingSelection = null;
+
         stage = 'solutions';
         const solutionsText = await solutionsRequest;
-        const solutionFields = ['pl_name', 'default_flag', 'soltype'];
-        const solutionInfo = readDataset(solutionsText, solutionFields, (record) => {
+        const solutionInfo = readDataset(solutionsText, ['pl_name', 'default_flag', 'soltype'], (record) => {
           const planet = planetByName.get(record.pl_name);
           if (!planet) return;
           planet.solutionCount++;
           if (record.default_flag === '1') planet.solutionType = record.soltype;
         });
+        solutionsReady = true;
         setDatasetStatus('solutions', 'ready', `${numberFormat.format(solutionInfo.records)} registros`);
-
-        planets = [...planetByName.values()].filter((planet) => (
-          planet.ra !== null && planet.dec !== null && planet.distanceLy !== null
-        ));
-        maxDistanceLy = Math.max(...planets.map((planet) => planet.distanceLy), 1);
-        document.getElementById('planet-count').textContent = `${numberFormat.format(planetByName.size)} planetas`;
-        document.getElementById('system-count').textContent =
-          `${numberFormat.format(new Set([...planetByName.values()].map((planet) => planet.host)).size)} sistemas`;
-        document.getElementById('visible-count').textContent = numberFormat.format(planets.length);
-        document.getElementById('solution-summary').textContent =
-          `${numberFormat.format(solutionInfo.records)} registros de parámetros; ${numberFormat.format(confirmedInfo.headers.length)} y ${numberFormat.format(solutionInfo.headers.length)} columnas en los CSV.`;
-        const methods = [...new Set([...planetByName.values()].map((planet) => planet.method))].sort((a, b) => a.localeCompare(b, 'es'));
-        for (const method of methods) {
-          const option = document.createElement('option');
-          option.value = method;
-          option.textContent = method;
-          methodFilter.appendChild(option);
-        }
-        statusElement.textContent = `${numberFormat.format(planets.length)} ubicaciones disponibles${webglUnavailable ? ' · WebGL no disponible' : ''}`;
-        statusElement.classList.replace('text-indigo-300', webglUnavailable ? 'text-amber-300' : 'text-emerald-300');
-        applyFilters();
+        if (selectedPlanet) renderSelected();
       } catch (error) {
         console.error('Error al cargar los datasets de NASA:', error);
         setDatasetStatus(stage, 'error', 'No se pudo leer el archivo. Abre la página con un servidor local.');
-        if (stage === 'confirmed') setDatasetStatus('solutions', 'error', 'No se procesó: falta el catálogo.');
-        statusElement.textContent = `${error.message} Abre el proyecto con un servidor local (p. ej. python3 -m http.server).`;
-        statusElement.classList.replace('text-indigo-300', 'text-red-300');
-        document.getElementById('planet-count').textContent = 'Datos no disponibles';
-        document.getElementById('system-count').textContent = 'Revisa la conexión y la ruta de los CSV';
+        if (stage === 'confirmed') {
+          setDatasetStatus('solutions', 'error', 'No se procesó: falta el catálogo.');
+          mapStatus.textContent = 'No se pudieron leer los datos. Abre el proyecto con un servidor local (python -m http.server 8000) y recarga.';
+          mapStatus.classList.add('text-plasma');
+        } else if (selectedPlanet) {
+          renderSelected();
+        }
       }
     }
 
-    function methodColor(method) {
-      const palette = {
-        Transit: '#60a5fa',
-        'Radial Velocity': '#f87171',
-        Microlensing: '#c084fc',
-        Imaging: '#34d399',
-        'Transit Timing Variations': '#fbbf24'
-      };
-      if (palette[method]) return new THREE.Color(palette[method]);
-      let hash = 0;
-      for (const character of method) hash = (hash * 31 + character.charCodeAt(0)) | 0;
-      return new THREE.Color().setHSL((Math.abs(hash) % 360) / 360, 0.72, 0.66);
+    // ----------------------------------------------------
+    // 3. CODIFICACIÓN VISUAL: método de descubrimiento = color + forma
+    // ----------------------------------------------------
+    const METHOD_ES = {
+      Transit: 'Tránsito',
+      'Radial Velocity': 'Velocidad radial',
+      Microlensing: 'Microlente gravitacional',
+      Imaging: 'Imagen directa',
+      'Transit Timing Variations': 'Variación del tiempo de tránsito',
+      'Eclipse Timing Variations': 'Variación del tiempo de eclipse',
+      'Orbital Brightness Modulation': 'Modulación del brillo orbital',
+      Astrometry: 'Astrometría',
+      'Pulsar Timing': 'Cronometría de púlsar',
+      'Pulsation Timing Variations': 'Variación de pulsaciones',
+      'Disk Kinematics': 'Cinemática del disco'
+    };
+    // Formas del shader: 0 círculo · 1 cuadrado · 2 triángulo · 3 rombo · 4 anillo
+    const METHOD_STYLE = {
+      Transit: { color: '#28E7F5', shape: 0, size: 6 },
+      'Radial Velocity': { color: '#FF2DAA', shape: 1, size: 6 },
+      Microlensing: { color: '#D7FF2F', shape: 2, size: 7 },
+      Imaging: { color: '#F4F1E8', shape: 3, size: 7 }
+    };
+    const OTHER_STYLE = { color: '#9a978f', shape: 0, size: 4.5 };
+    const SHAPE_SVG = [
+      '<circle cx="6" cy="6" r="4.6"/>',
+      '<rect x="1.9" y="1.9" width="8.2" height="8.2"/>',
+      '<path d="M6 1.2 L11 10.4 H1 Z"/>',
+      '<path d="M6 0.8 L11.2 6 L6 11.2 L0.8 6 Z"/>'
+    ];
+    const methodStyle = (method) => METHOD_STYLE[method] || OTHER_STYLE;
+    const methodLabel = (method) => METHOD_ES[method] || method || 'Sin dato';
+    function shapeIcon(method) {
+      const style = methodStyle(method);
+      const shape = style === OTHER_STYLE ? '<circle cx="6" cy="6" r="3"/>' : SHAPE_SVG[style.shape];
+      return `<svg viewBox="0 0 12 12" width="12" height="12" fill="${style.color}" aria-hidden="true" class="flex-none">${shape}</svg>`;
+    }
+
+    function sizeClass(radius) {
+      if (radius === null) return null;
+      if (radius <= 1.6) return 'Rocoso';
+      if (radius <= 4) return 'Mini-Neptuno';
+      if (radius <= 10) return 'Tipo Neptuno';
+      return 'Gigante gaseoso';
+    }
+    function temperatureClass(insol) {
+      if (insol === null) return null;
+      if (insol > 1.5) return 'caliente';
+      if (insol >= 0.25) return 'templado';
+      return 'frío';
+    }
+    function formatDistance(distanceLy) {
+      if (distanceLy === null) return null;
+      return `${fmt(distanceLy, distanceLy < 10 ? 1 : 0)} años luz`;
+    }
+
+    // ----------------------------------------------------
+    // 4. PANEL DE BÚSQUEDA Y FILTROS
+    // ----------------------------------------------------
+    const searchInput = document.getElementById('planet-search');
+    const resultsElement = document.getElementById('planet-results');
+    const methodOptions = document.getElementById('method-options');
+    const filtersPanel = document.getElementById('explore-filters');
+    const selectedPanel = document.getElementById('explore-selected');
+    const selectedBody = document.getElementById('selected-body');
+    const clearButton = document.getElementById('clear-filters');
+    const mapStatus = document.getElementById('map-status');
+
+    function buildFilterControls() {
+      const count = (predicate) => numberFormat.format(positioned.filter(predicate).length);
+      document.querySelector('[data-count="terrestre"]').textContent = count((planet) => planet.terrestrial === true);
+      document.querySelector('[data-count="habitable"]').textContent = count((planet) => planet.habitableZone === true);
+      document.querySelector('[data-count="cercanos"]').textContent = count((planet) => planet.distanceLy < 100);
+
+      const methodCounts = new Map();
+      for (const planet of positioned) methodCounts.set(planet.method, (methodCounts.get(planet.method) || 0) + 1);
+      const sorted = [...methodCounts.entries()].sort((a, b) => b[1] - a[1]);
+      const option = (value, label, total, icon) => `
+        <label class="method-option">
+          <input type="radio" name="method" value="${escapeHTML(value)}" class="sr-only" ${value === filters.method ? 'checked' : ''}>
+          ${icon}<span class="text-sm leading-tight">${escapeHTML(label)}</span><span class="count">${numberFormat.format(total)}</span>
+        </label>`;
+      methodOptions.innerHTML =
+        option('', 'Todos los métodos', positioned.length, '<span class="w-3 flex-none" aria-hidden="true"></span>') +
+        sorted.map(([method, total]) => option(method, methodLabel(method), total, shapeIcon(method))).join('');
     }
 
     function applyFilters() {
-      const query = searchInput.value.trim().toLocaleLowerCase('es');
-      const method = methodFilter.value;
-      visiblePlanets = planets.filter((planet) => (
-        (!method || planet.method === method) &&
+      const query = filters.query.toLocaleLowerCase('es');
+      visiblePlanets = positioned.filter((planet) => (
+        (!filters.method || planet.method === filters.method) &&
+        (!filters.terrestre || planet.terrestrial === true) &&
+        (!filters.habitable || planet.habitableZone === true) &&
+        (!filters.cercanos || planet.distanceLy < 100) &&
         (!query || planet.name.toLocaleLowerCase('es').includes(query) || planet.host.toLocaleLowerCase('es').includes(query))
       ));
-      document.getElementById('visible-count').textContent = numberFormat.format(visiblePlanets.length);
+      const active = Boolean(filters.query || filters.method || filters.terrestre || filters.habitable || filters.cercanos);
       document.getElementById('filter-summary').textContent =
-        `${numberFormat.format(visiblePlanets.length)} de ${numberFormat.format(planets.length)} planetas con posición`;
+        `${numberFormat.format(visiblePlanets.length)} de ${numberFormat.format(positioned.length)} en el mapa`;
+      document.getElementById('mobile-count').textContent = active ? numberFormat.format(visiblePlanets.length) : '';
+      clearButton.hidden = !active;
+      if (!webglUnavailable) {
+        mapStatus.textContent = active && !visiblePlanets.length ? 'Ningún planeta cumple estos filtros. Prueba quitando alguno.' : '';
+      }
       renderPlanetPoints();
-      renderPlanetResults(query);
+      renderResults();
     }
 
-    function renderPlanetResults(query) {
-      const results = document.getElementById('planet-results');
-      results.replaceChildren();
+    function renderResults() {
+      const query = filters.query.trim().toLocaleLowerCase('es');
+      resultsElement.replaceChildren();
       if (!query) return;
-      if (!visiblePlanets.length) {
-        results.textContent = 'No hay coincidencias con posición disponible.';
-        results.className = 'mt-2 text-xs text-slate-500';
+      const matches = planets.filter((planet) => (
+        planet.name.toLocaleLowerCase('es').includes(query) || planet.host.toLocaleLowerCase('es').includes(query)
+      ));
+      if (!matches.length) {
+        resultsElement.innerHTML = '<p class="text-sm text-titanio/65 py-2">Ningún planeta o sistema con ese nombre.</p>';
         return;
       }
-      results.className = 'mt-2 space-y-1';
-      for (const planet of visiblePlanets.slice(0, 5)) {
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.className = 'w-full rounded-md bg-slate-800/80 hover:bg-slate-700 px-2 py-1 text-left';
-        button.addEventListener('click', () => showPlanet(planet));
-        const name = document.createElement('span');
-        name.className = 'block text-xs text-white';
-        name.textContent = planet.name;
-        const host = document.createElement('span');
-        host.className = 'block text-[10px] text-slate-400';
-        host.textContent = `${planet.host} · ${planet.method}`;
-        button.append(name, host);
-        results.appendChild(button);
-      }
-      if (visiblePlanets.length > 5) {
-        const more = document.createElement('p');
-        more.className = 'text-[10px] text-slate-500';
-        more.textContent = `Mostrando 5 de ${numberFormat.format(visiblePlanets.length)} coincidencias.`;
-        results.appendChild(more);
-      }
+      const visibleSet = new Set(visiblePlanets);
+      resultsElement.innerHTML = matches.slice(0, 8).map((planet) => {
+        const note = !planet.position ? 'sin posición en el mapa' : !visibleSet.has(planet) ? 'oculto por los filtros' : formatDistance(planet.distanceLy);
+        return `
+          <button type="button" class="result-btn" data-planet="${escapeHTML(planet.name)}" aria-current="${planet === selectedPlanet}">
+            <span class="flex items-center gap-2 text-[0.95rem]">${shapeIcon(planet.method)}${escapeHTML(planet.name)}</span>
+            <span class="block font-mono text-xs text-titanio/60 pl-5">${escapeHTML(note)}</span>
+          </button>`;
+      }).join('') + (matches.length > 8 ? `<p class="font-mono text-xs text-titanio/60 px-2 pt-1">8 de ${numberFormat.format(matches.length)} coincidencias</p>` : '');
     }
 
-    function renderPlanetPoints() {
-      if (!planetPoints) return;
-      scene.remove(planetPoints);
-      planetPoints.geometry.dispose();
-      const positions = [];
-      const colors = [];
-      for (const planet of visiblePlanets) {
-        const ra = THREE.MathUtils.degToRad(planet.ra);
-        const dec = THREE.MathUtils.degToRad(planet.dec);
-        const radius = (planet.distanceLy / maxDistanceLy) * 620;
-        positions.push(
-          radius * Math.cos(dec) * Math.cos(ra),
-          radius * Math.sin(dec),
-          radius * Math.cos(dec) * Math.sin(ra)
-        );
-        const color = methodColor(planet.method);
-        colors.push(color.r, color.g, color.b);
-      }
-      const geometry = new THREE.BufferGeometry();
-      geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-      geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-      planetPoints = new THREE.Points(geometry, new THREE.PointsMaterial({
-        size: 5,
-        sizeAttenuation: true,
-        vertexColors: true,
-        transparent: true,
-        opacity: 0.95,
-        depthWrite: false
-      }));
-      scene.add(planetPoints);
-    }
+    resultsElement.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-planet]');
+      if (!button) return;
+      selectPlanet(planetByName.get(button.dataset.planet), { fly: true });
+      if (compactLayout.matches) closeFilters();
+    });
+    searchInput.addEventListener('input', () => { filters.query = searchInput.value.trim(); applyFilters(); });
+    searchInput.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter') return;
+      const first = resultsElement.querySelector('[data-planet]');
+      if (first) first.click();
+    });
+    filtersPanel.addEventListener('change', (event) => {
+      const input = event.target;
+      if (input.dataset.filter) filters[input.dataset.filter] = input.checked;
+      if (input.name === 'method') filters.method = input.value;
+      applyFilters();
+    });
+    clearButton.addEventListener('click', () => {
+      Object.assign(filters, { query: '', method: '', terrestre: false, habitable: false, cercanos: false });
+      searchInput.value = '';
+      filtersPanel.querySelectorAll('[data-filter]').forEach((input) => { input.checked = false; });
+      filtersPanel.querySelector('input[name="method"][value=""]').checked = true;
+      applyFilters();
+    });
 
-    function showPlanet(planet) {
-      planetDetails.replaceChildren();
-      const title = document.createElement('p');
-      title.className = 'font-bold text-white text-sm';
-      title.textContent = planet.name;
-      const host = document.createElement('p');
-      host.className = 'text-slate-400 mt-1';
-      host.textContent = `Sistema: ${planet.host}`;
-      const values = document.createElement('p');
-      values.className = 'mt-2 leading-5';
-      const details = [
-        `Método: ${planet.method}`,
-        `Año: ${planet.year ?? 'Sin dato'}`,
-        `Distancia: ${planet.distanceLy === null ? 'Sin dato' : `${numberFormat.format(Math.round(planet.distanceLy))} años luz`}`,
-        `Radio: ${planet.radius === null ? 'Sin dato' : `${planet.radius} radios terrestres`}`,
-        `Masa: ${planet.mass === null ? 'Sin dato' : `${planet.mass} masas terrestres`}`,
-        `Período: ${planet.period === null ? 'Sin dato' : `${planet.period} días`}`
-      ];
-      values.textContent = details.join(' · ');
-      const solution = document.createElement('p');
-      solution.className = 'text-slate-500 mt-2';
-      solution.textContent = planet.solutionType
-        ? `Solución predeterminada: ${planet.solutionType} · ${numberFormat.format(planet.solutionCount)} registros de parámetros`
-        : 'No se encontró una solución relacionada en el archivo PS.';
-      planetDetails.append(title, host, values, solution);
-    }
-
-    searchInput.addEventListener('input', applyFilters);
-    methodFilter.addEventListener('change', applyFilters);
+    function openFilters() { filtersPanel.classList.add('is-open'); }
+    function closeFilters() { filtersPanel.classList.remove('is-open'); }
+    document.getElementById('open-filters').addEventListener('click', () => { openFilters(); searchInput.focus({ preventScroll: true }); });
+    document.querySelectorAll('[data-close-filters]').forEach((button) => button.addEventListener('click', closeFilters));
 
     // ----------------------------------------------------
-    // 3. MOTOR 3D: MAPA ESPACIAL DE EXOPLANETAS
+    // 5. PANEL DEL PLANETA SELECCIONADO
+    // ----------------------------------------------------
+    function valueRow(label, value, unit, { digits = 2, calculated = false, title = '' } = {}) {
+      const content = value === null
+        ? '<span class="text-titanio/55">sin dato</span>'
+        : `${calculated ? '<span class="text-titanio/65" title="Calculado a partir del radio, no medido">≈ </span>' : ''}<span class="text-titanio">${fmt(value, digits)}</span>${unit ? ` <span class="text-titanio/65 text-xs" ${title ? `title="${title}"` : ''}>${unit}</span>` : ''}`;
+      return `<div class="data-row"><dt>${label}</dt><span class="leader" aria-hidden="true"></span><dd class="font-mono tabular">${content}</dd></div>`;
+    }
+
+    function planetIllustration(planet) {
+      const sizes = { 'Rocoso': 15, 'Mini-Neptuno': 21, 'Tipo Neptuno': 27, 'Gigante gaseoso': 33 };
+      const kind = sizeClass(planet.radius);
+      if (!kind) {
+        return `<svg viewBox="0 0 80 80" class="w-20 h-20 flex-none" aria-hidden="true"><circle cx="40" cy="40" r="22" fill="none" stroke="rgba(244,241,232,.5)" stroke-width="2" stroke-dasharray="4 4"/><text x="40" y="46" text-anchor="middle" font-family="Orbitron" font-size="16" fill="rgba(244,241,232,.7)">?</text></svg>`;
+      }
+      const r = sizes[kind];
+      const ring = planet.habitableZone ? `<ellipse cx="40" cy="40" rx="${r + 12}" ry="${(r + 12) * 0.26}" transform="rotate(-16 40 40)" fill="none" stroke="#D7FF2F" stroke-width="2"/>` : '';
+      return `<svg viewBox="0 0 80 80" class="w-20 h-20 flex-none" aria-hidden="true">
+        <defs><clipPath id="sel-clip"><circle cx="40" cy="40" r="${r}"/></clipPath></defs>
+        <circle cx="40" cy="40" r="${r}" fill="#1a0a1d"/>
+        <g clip-path="url(#sel-clip)" stroke="#FF2DAA" stroke-opacity=".45" stroke-width="1.5" fill="none">
+          <ellipse cx="40" cy="${40 - r * 0.45}" rx="${r * 1.3}" ry="${r * 0.14}"/><ellipse cx="40" cy="${40 + r * 0.1}" rx="${r * 1.3}" ry="${r * 0.18}"/><ellipse cx="40" cy="${40 + r * 0.55}" rx="${r * 1.3}" ry="${r * 0.12}"/>
+        </g>
+        <circle cx="40" cy="40" r="${r}" fill="none" stroke="#FF2DAA" stroke-width="2.2"/>
+        ${ring}
+      </svg>`;
+    }
+
+    function renderSelected() {
+      const planet = selectedPlanet;
+      if (!planet) return;
+      const kind = sizeClass(planet.radius);
+      const temperature = temperatureClass(planet.insol);
+      const classLine = [kind || 'Tamaño sin dato', temperature].filter(Boolean).join(' · ');
+      const siblings = (systems.get(planet.host) || []).slice().sort((a, b) => (a.orbit ?? a.period ?? Infinity) - (b.orbit ?? b.period ?? Infinity));
+      const badges = [];
+      if (planet.habitableZone) badges.push('<span class="inline-flex items-center gap-1.5 px-2 py-1 border border-acido/60 text-acido font-mono text-[0.7rem] uppercase tracking-[0.12em]" title="Criterio: insolación entre 0,25 y 1,5 veces la terrestre">Zona habitable ≈</span>');
+      if (!planet.position) badges.push('<span class="inline-flex px-2 py-1 border border-titanio/30 text-titanio/75 font-mono text-[0.7rem] uppercase tracking-[0.12em]">Sin posición en el mapa</span>');
+
+      const solutions = !solutionsReady
+        ? 'Soluciones publicadas (PS): cargando…'
+        : planet.solutionCount
+          ? `${numberFormat.format(planet.solutionCount)} soluciones publicadas en PS${planet.solutionType ? ` · predeterminada: ${escapeHTML(planet.solutionType)}` : ''}`
+          : 'Sin soluciones relacionadas en PS';
+
+      selectedBody.innerHTML = `
+        <h2 class="label-mono text-plasma mb-3">Seleccionado</h2>
+        <div class="flex items-center gap-4">
+          ${planetIllustration(planet)}
+          <div class="min-w-0">
+            <p class="font-display font-bold text-[1.45rem] leading-tight break-words">${escapeHTML(planet.name)}</p>
+            <p class="mt-1 text-sm text-titanio/75">${escapeHTML(classLine)}</p>
+          </div>
+        </div>
+        ${badges.length ? `<div class="mt-3 flex flex-wrap gap-2">${badges.join('')}</div>` : ''}
+        <dl class="mt-4 space-y-2 text-sm">
+          ${valueRow('Distancia', planet.distanceLy, 'años luz', { digits: planet.distanceLy !== null && planet.distanceLy < 10 ? 1 : 0 })}
+          ${valueRow('Radio', planet.radius, 'R⊕', { title: 'Radios terrestres' })}
+          ${valueRow('Masa', planet.mass, 'M⊕', { calculated: planet.massCalculated, title: 'Masas terrestres' })}
+          <div class="sel-extra space-y-2">
+            ${valueRow('Período orbital', planet.period, 'días', { digits: planet.period !== null && planet.period < 10 ? 2 : 1 })}
+            ${valueRow('Luz recibida', planet.insol, '× Tierra', { digits: 2 })}
+            <div class="data-row"><dt>Descubierto</dt><span class="leader" aria-hidden="true"></span><dd class="font-mono tabular text-titanio">${planet.year ?? '<span class="text-titanio/55">sin dato</span>'}</dd></div>
+            <div class="data-row"><dt>Método</dt><span class="leader" aria-hidden="true"></span><dd class="flex items-center gap-1.5 text-titanio">${shapeIcon(planet.method)}${escapeHTML(methodLabel(planet.method))}</dd></div>
+          </div>
+        </dl>
+
+        <div class="sel-extra">
+          <div class="mt-5 pt-4 border-t border-titanio/15">
+            <p class="label-mono">Sistema ${escapeHTML(planet.host)}</p>
+            <p class="mt-1 text-xs text-titanio/60">${siblings.length === 1 ? '1 planeta conocido' : `${siblings.length} planetas conocidos`}${siblings.length > 1 && planet.position ? ' · órbitas ilustrativas en el mapa' : ''}</p>
+            ${siblings.length > 1 ? `<ul class="mt-2 grid grid-cols-2 gap-1">${siblings.map((sibling) => `
+              <li><button type="button" class="result-btn !py-1.5 text-sm ${sibling === planet ? 'text-plasma' : 'text-titanio/85'}" data-sibling="${escapeHTML(sibling.name)}" aria-current="${sibling === planet}">${escapeHTML(sibling.name)}</button></li>`).join('')}</ul>` : ''}
+          </div>
+          <p class="mt-4 text-xs text-titanio/60 leading-relaxed">${solutions}</p>
+          <a class="mt-3 inline-flex items-center gap-2 text-sm text-cian hover:underline underline-offset-4" target="_blank" rel="noopener" href="https://exoplanetarchive.ipac.caltech.edu/overview/${encodeURIComponent(planet.name)}">Ver en NASA Exoplanet Archive <i class="fa-solid fa-arrow-up-right-from-square text-[0.7em]" aria-hidden="true"></i></a>
+          <p class="mt-4 pt-3 border-t border-titanio/15 text-[0.7rem] text-titanio/55 leading-relaxed">R⊕ y M⊕: radio y masa de la Tierra · ≈ calculado a partir del radio, no medido · «sin dato»: la NASA no tiene esa medición.</p>
+        </div>
+        <button type="button" data-toggle-details class="lg:hidden mt-3 w-full py-2 font-mono text-xs uppercase tracking-[0.16em] text-cian border-t border-titanio/15">${selectedPanel.classList.contains('is-expanded') ? 'Menos datos' : 'Más datos'}</button>
+      `;
+    }
+
+    selectedPanel.addEventListener('click', (event) => {
+      const sibling = event.target.closest('[data-sibling]');
+      if (sibling) { selectPlanet(planetByName.get(sibling.dataset.sibling), { fly: true }); return; }
+      if (event.target.closest('[data-toggle-details]')) {
+        selectedPanel.classList.toggle('is-expanded');
+        renderSelected();
+      }
+    });
+
+    function selectPlanet(planet, { fly = false, updateHash = true } = {}) {
+      if (!planet) return;
+      selectedPlanet = planet;
+      renderSelected();
+      renderResults();
+      updateSelectionGraphics();
+      if (fly && planet.position) flyTo(planet.position, 22);
+      if (updateHash && vizActive) history.replaceState(null, '', `#/explorar/${encodeURIComponent(planet.name)}`);
+    }
+
+    // ----------------------------------------------------
+    // 6. MOTOR 3D: MAPA ESPACIAL DE EXOPLANETAS
     // ----------------------------------------------------
     const container = document.getElementById('galaxy-container');
-    
-    // Escena, Cámara y Renderer
-    const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x050714, 0.0008);
+    const mapArea = document.getElementById('map-area');
+    const labelsLayer = document.getElementById('map-labels');
+    const tooltip = document.getElementById('map-tooltip');
 
-    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
-    camera.position.set(0, 400, 700);
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(55, 1, 0.05, 6000);
+    const OVERVIEW = { target: new THREE.Vector3(0, 0, 0), position: new THREE.Vector3(0, 210, 430) };
+    camera.position.copy(OVERVIEW.position);
 
     let renderer;
     let controls;
     let webglUnavailable = false;
     try {
       renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setClearColor(0x08080c, 1);
       container.appendChild(renderer.domElement);
-
-      // Controles de Cámara (OrbitControls)
       controls = new THREE.OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
-      controls.dampingFactor = 0.05;
-      controls.maxDistance = 1200;
-      controls.minDistance = 50;
+      controls.dampingFactor = 0.08;
+      controls.minDistance = 1.5;
+      controls.maxDistance = 1100;
+      controls.rotateSpeed = 0.7;
+      controls.addEventListener('start', () => { flight = null; });
     } catch (error) {
       webglUnavailable = true;
       console.error('No se pudo iniciar la visualización 3D:', error);
       if (renderer?.domElement.isConnected) renderer.domElement.remove();
-      const message = document.createElement('p');
-      message.className = 'absolute inset-0 flex items-center justify-center px-8 text-center text-slate-300';
-      message.textContent = 'WebGL no está disponible en este navegador. Los datos del catálogo seguirán disponibles en el panel.';
-      container.appendChild(message);
+      renderer = null;
+      mapStatus.textContent = 'Tu navegador no puede mostrar el mapa 3D (WebGL). La búsqueda, los filtros y los datos de cada planeta siguen disponibles en los paneles.';
     }
 
-    // A. Sol Central brillante
-    const sunGeometry = new THREE.SphereGeometry(25, 32, 32);
-    const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
-    const sunMesh = new THREE.Mesh(sunGeometry, sunMaterial);
-    scene.add(sunMesh);
+    function resizeRenderer() {
+      if (!renderer) return;
+      const width = mapArea.clientWidth || window.innerWidth;
+      const height = mapArea.clientHeight || window.innerHeight;
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, compactLayout.matches ? 1.5 : 2));
+      renderer.setSize(width, height);
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      pointUniforms.pixelRatio.value = renderer.getPixelRatio();
+    }
 
-    // Resplandor del Sol
-    const glowGeometry = new THREE.SphereGeometry(45, 32, 32);
-    const glowMaterial = new THREE.MeshBasicMaterial({
-      color: 0xffaa00,
-      transparent: true,
-      opacity: 0.35,
-      blending: THREE.AdditiveBlending
-    });
-    const glowMesh = new THREE.Mesh(glowGeometry, glowMaterial);
-    scene.add(glowMesh);
-
-    // B. Fondo galáctico ilustrativo; los puntos de datos se cargan desde el catálogo.
-    const parameters = {
-      count: 15000,
-      size: 3.5,
-      radius: 650,
-      branches: 4,
-      spin: 1,
-      randomness: 0.5,
-      insideColor: '#ffddaa',
-      outsideColor: '#4477ff'
-    };
-
-    const geometry = new THREE.BufferGeometry();
-    const positions = new Float32Array(parameters.count * 3);
-    const colors = new Float32Array(parameters.count * 3);
-
-    const colorInside = new THREE.Color(parameters.insideColor);
-    const colorOutside = new THREE.Color(parameters.outsideColor);
-
-    for (let i = 0; i < parameters.count; i++) {
-      // Posición en espiral
-      const i3 = i * 3;
-      const radius = Math.random() * parameters.radius;
-      const spinAngle = radius * parameters.spin;
-      const branchAngle = ((i % parameters.branches) / parameters.branches) * Math.PI * 2;
-
-      const randomX = (Math.random() - 0.5) * parameters.randomness * radius;
-      const randomY = (Math.random() - 0.5) * parameters.randomness * (radius * 0.3);
-      const randomZ = (Math.random() - 0.5) * parameters.randomness * radius;
-
-      positions[i3] = Math.cos(branchAngle + spinAngle) * radius + randomX;
-      positions[i3 + 1] = randomY;
-      positions[i3 + 2] = Math.sin(branchAngle + spinAngle) * radius + randomZ;
-
-      // Color degradado (centro cálido a bordes fríos)
-      const mixedColor = colorInside.clone();
-      mixedColor.lerp(colorOutside, radius / parameters.radius);
-      
-      // Añadir variación dorada como la imagen de la NASA
-      if (Math.random() > 0.4) {
-        mixedColor.setHex(0xffaa22);
+    // A. Fondo: estrellas ilustrativas, muy atenuadas (no son datos)
+    {
+      const count = compactLayout.matches ? 900 : 1800;
+      const positions = new Float32Array(count * 3);
+      for (let i = 0; i < count; i++) {
+        const u = Math.random() * 2 - 1;
+        const theta = Math.random() * Math.PI * 2;
+        const radius = 1800 + Math.random() * 1400;
+        const s = Math.sqrt(1 - u * u);
+        positions.set([radius * s * Math.cos(theta), radius * u, radius * s * Math.sin(theta)], i * 3);
       }
-
-      colors[i3] = mixedColor.r;
-      colors[i3 + 1] = mixedColor.g;
-      colors[i3 + 2] = mixedColor.b;
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      scene.add(new THREE.Points(geometry, new THREE.PointsMaterial({ color: 0x8a7fb8, size: 1.4, sizeAttenuation: false, transparent: true, opacity: 0.45, depthWrite: false })));
     }
 
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    // B. El Sol y los anillos de distancia (10, 100, 1.000 y 10.000 años luz)
+    const sun = new THREE.Mesh(new THREE.SphereGeometry(1.6, 24, 24), new THREE.MeshBasicMaterial({ color: 0xf4f1e8 }));
+    scene.add(sun);
+    const RING_DISTANCES = [10, 100, 1000, 10000];
+    const ringLabels = [];
+    for (const distance of RING_DISTANCES) {
+      const radius = mapRadius(distance);
+      const points = [];
+      for (let i = 0; i <= 160; i++) {
+        const angle = (i / 160) * Math.PI * 2;
+        points.push(new THREE.Vector3(Math.cos(angle) * radius, 0, Math.sin(angle) * radius));
+      }
+      const ring = new THREE.Line(
+        new THREE.BufferGeometry().setFromPoints(points),
+        new THREE.LineDashedMaterial({ color: 0xf4f1e8, dashSize: 2.2, gapSize: 2.6, transparent: true, opacity: 0.2, depthWrite: false })
+      );
+      ring.computeLineDistances();
+      scene.add(ring);
+      const label = document.createElement('span');
+      label.className = 'map-label';
+      label.textContent = `${numberFormat.format(distance)} años luz`;
+      labelsLayer.appendChild(label);
+      ringLabels.push({ element: label, anchor: new THREE.Vector3(radius * 0.7071, 0, radius * 0.7071) });
+    }
+    const sunLabel = document.createElement('span');
+    sunLabel.className = 'map-label';
+    sunLabel.textContent = 'Sol · nosotros';
+    labelsLayer.appendChild(sunLabel);
 
-    // Material de partículas
-    const material = new THREE.PointsMaterial({
-      size: parameters.size,
-      sizeAttenuation: true,
-      depthWrite: false,
-      blending: THREE.AdditiveBlending,
-      vertexColors: true
-    });
+    // C. Puntos de datos: un shader dibuja la forma de cada método
+    const pointUniforms = { pixelRatio: { value: 1 }, opacity: { value: 0.95 } };
+    const POINT_VERTEX = `
+      attribute float size;
+      attribute float shape;
+      attribute vec3 aColor;
+      uniform float pixelRatio;
+      varying vec3 vColor;
+      varying float vShape;
+      void main() {
+        vColor = aColor;
+        vShape = shape;
+        vec4 mv = modelViewMatrix * vec4(position, 1.0);
+        gl_PointSize = clamp(size * pixelRatio * (260.0 / -mv.z), 2.5 * pixelRatio, 20.0 * pixelRatio);
+        gl_Position = projectionMatrix * mv;
+      }`;
+    const POINT_FRAGMENT = `
+      uniform float opacity;
+      varying vec3 vColor;
+      varying float vShape;
+      void main() {
+        vec2 p = gl_PointCoord * 2.0 - 1.0;
+        float a;
+        if (vShape < 0.5) {
+          a = 1.0 - smoothstep(0.72, 0.92, length(p));
+        } else if (vShape < 1.5) {
+          a = 1.0 - smoothstep(0.6, 0.76, max(abs(p.x), abs(p.y)));
+        } else if (vShape < 2.5) {
+          vec2 q = vec2(p.x, -p.y + 0.22);
+          float d = max(abs(q.x) * 0.866 + q.y * 0.5, -q.y);
+          a = 1.0 - smoothstep(0.4, 0.5, d);
+        } else if (vShape < 3.5) {
+          a = 1.0 - smoothstep(0.66, 0.84, abs(p.x) + abs(p.y));
+        } else {
+          float r = length(p);
+          a = (1.0 - smoothstep(0.84, 0.98, r)) * smoothstep(0.6, 0.72, r);
+        }
+        if (a < 0.03) discard;
+        gl_FragColor = vec4(vColor, a * opacity);
+      }`;
+    const pointsMaterial = new THREE.ShaderMaterial({ uniforms: pointUniforms, vertexShader: POINT_VERTEX, fragmentShader: POINT_FRAGMENT, transparent: true, depthWrite: false });
+    const ringUniforms = { pixelRatio: pointUniforms.pixelRatio, opacity: { value: 0.85 } };
+    const ringsMaterial = new THREE.ShaderMaterial({ uniforms: ringUniforms, vertexShader: POINT_VERTEX, fragmentShader: POINT_FRAGMENT, transparent: true, depthWrite: false });
+    const colorCache = new Map();
+    const colorOf = (hex) => { if (!colorCache.has(hex)) colorCache.set(hex, new THREE.Color(hex)); return colorCache.get(hex); };
+    let planetPoints = null;
+    let habitableRings = null;
 
-    const galaxyPoints = new THREE.Points(geometry, material);
-    scene.add(galaxyPoints);
+    function pointsFrom(list, styleFor, material) {
+      const positions = new Float32Array(list.length * 3);
+      const colors = new Float32Array(list.length * 3);
+      const sizes = new Float32Array(list.length);
+      const shapes = new Float32Array(list.length);
+      list.forEach((planet, i) => {
+        const style = styleFor(planet);
+        const color = colorOf(style.color);
+        positions.set([planet.position.x, planet.position.y, planet.position.z], i * 3);
+        colors.set([color.r, color.g, color.b], i * 3);
+        sizes[i] = style.size;
+        shapes[i] = style.shape;
+      });
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      geometry.setAttribute('aColor', new THREE.BufferAttribute(colors, 3));
+      geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+      geometry.setAttribute('shape', new THREE.BufferAttribute(shapes, 1));
+      return new THREE.Points(geometry, material);
+    }
 
-    // C. Bucle de Animación
-    const clock = new THREE.Clock();
+    function renderPlanetPoints() {
+      if (!renderer) return;
+      for (const object of [planetPoints, habitableRings]) {
+        if (!object) continue;
+        scene.remove(object);
+        object.geometry.dispose();
+      }
+      planetPoints = pointsFrom(visiblePlanets, methodStyle, pointsMaterial);
+      const habitable = visiblePlanets.filter((planet) => planet.habitableZone === true);
+      habitableRings = pointsFrom(habitable, () => ({ color: '#D7FF2F', shape: 4, size: 15 }), ringsMaterial);
+      scene.add(planetPoints, habitableRings);
+    }
+
+    // D. Selección: retícula magenta, línea al Sol y órbitas del sistema
+    const selectionMarker = new THREE.Group();
+    {
+      const material = new THREE.MeshBasicMaterial({ color: 0xff2daa, transparent: true, depthTest: false, side: THREE.DoubleSide });
+      selectionMarker.add(new THREE.Mesh(new THREE.RingGeometry(0.82, 1, 48), material));
+      const ticks = [];
+      for (const [x, y] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) ticks.push(new THREE.Vector3(x * 1.15, y * 1.15, 0), new THREE.Vector3(x * 1.7, y * 1.7, 0));
+      selectionMarker.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(ticks), new THREE.LineBasicMaterial({ color: 0xff2daa, depthTest: false, transparent: true })));
+      selectionMarker.renderOrder = 10;
+      selectionMarker.visible = false;
+      scene.add(selectionMarker);
+    }
+    const sunLine = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineDashedMaterial({ color: 0xff2daa, dashSize: 1.6, gapSize: 1.4, transparent: true, opacity: 0.55, depthWrite: false }));
+    sunLine.visible = false;
+    scene.add(sunLine);
+    const selectionLabel = document.createElement('span');
+    selectionLabel.className = 'map-label map-label--selected';
+    labelsLayer.appendChild(selectionLabel);
+    let systemGroup = null;
+    let orbitingBodies = [];
+
+    function semiMajorAxis(planet) {
+      if (planet.orbit !== null) return planet.orbit;
+      if (planet.period !== null) return Math.cbrt((planet.period / 365.25) ** 2); // aproximación con una estrella de masa solar
+      return null;
+    }
+
+    function buildSystemOrbits(planet) {
+      if (systemGroup) {
+        scene.remove(systemGroup);
+        systemGroup.traverse((object) => { object.geometry?.dispose(); });
+        systemGroup = null;
+      }
+      orbitingBodies = [];
+      const members = (systems.get(planet.host) || []).filter((member) => semiMajorAxis(member) !== null);
+      if (!planet.position || !members.length) return;
+      const maxAxis = Math.max(...members.map(semiMajorAxis));
+      const minPeriod = Math.min(...members.map((member) => member.period ?? 365.25 * semiMajorAxis(member) ** 1.5));
+      systemGroup = new THREE.Group();
+      systemGroup.position.copy(planet.position);
+      systemGroup.rotation.x = 0.42;
+      for (const member of members) {
+        const radius = 1.4 + 5.6 * Math.sqrt(semiMajorAxis(member) / maxAxis);
+        const isSelected = member === planet;
+        const points = [];
+        for (let i = 0; i <= 96; i++) {
+          const angle = (i / 96) * Math.PI * 2;
+          points.push(new THREE.Vector3(Math.cos(angle) * radius, 0, Math.sin(angle) * radius));
+        }
+        systemGroup.add(new THREE.Line(
+          new THREE.BufferGeometry().setFromPoints(points),
+          new THREE.LineBasicMaterial({ color: isSelected ? 0xff2daa : 0xf4f1e8, transparent: true, opacity: isSelected ? 0.75 : 0.22, depthWrite: false })
+        ));
+        const body = new THREE.Mesh(
+          new THREE.SphereGeometry(isSelected ? 0.34 : 0.22, 16, 16),
+          new THREE.MeshBasicMaterial({ color: isSelected ? 0xff2daa : 0xf4f1e8 })
+        );
+        let hash = 0;
+        for (const character of member.name) hash = (hash * 31 + character.charCodeAt(0)) | 0;
+        const period = member.period ?? 365.25 * semiMajorAxis(member) ** 1.5;
+        const entry = { body, radius, angle: (Math.abs(hash) % 628) / 100, speed: 0.6 * (minPeriod / period) };
+        body.position.set(Math.cos(entry.angle) * radius, 0, Math.sin(entry.angle) * radius);
+        systemGroup.add(body);
+        orbitingBodies.push(entry);
+      }
+      const star = new THREE.Mesh(new THREE.SphereGeometry(0.45, 16, 16), new THREE.MeshBasicMaterial({ color: 0xf4f1e8 }));
+      systemGroup.add(star);
+      scene.add(systemGroup);
+    }
+
+    function updateSelectionGraphics() {
+      if (!renderer || !selectedPlanet) return;
+      const position = selectedPlanet.position;
+      selectionMarker.visible = Boolean(position);
+      sunLine.visible = Boolean(position);
+      if (position) {
+        selectionMarker.position.copy(position);
+        sunLine.geometry.dispose();
+        sunLine.geometry = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0, 0), position.clone()]);
+        sunLine.computeLineDistances();
+      }
+      selectionLabel.innerHTML = position
+        ? `${escapeHTML(selectedPlanet.name)} <span class="text-titanio/60">· ${escapeHTML(formatDistance(selectedPlanet.distanceLy))}</span>`
+        : '';
+      buildSystemOrbits(selectedPlanet);
+    }
+
+    // E. Vuelo de cámara (Eyes-style): se interrumpe si el usuario mueve el mapa
+    let flight = null;
+    function flyToPose(target, position) {
+      if (!controls) return;
+      if (reduceMotion.matches) {
+        controls.target.copy(target);
+        camera.position.copy(position);
+        return;
+      }
+      flight = { start: performance.now(), duration: 1400, fromTarget: controls.target.clone(), toTarget: target.clone(), fromPosition: camera.position.clone(), toPosition: position.clone() };
+    }
+    function flyTo(point, distance) {
+      if (!controls) return;
+      const direction = camera.position.clone().sub(controls.target).normalize();
+      flyToPose(point, point.clone().add(direction.multiplyScalar(distance)));
+    }
+    document.querySelectorAll('[data-zoom]').forEach((button) => button.addEventListener('click', () => {
+      if (!controls) return;
+      const mode = button.dataset.zoom;
+      if (mode === 'reset') { flyToPose(OVERVIEW.target, OVERVIEW.position); return; }
+      const offset = camera.position.clone().sub(controls.target);
+      const length = THREE.MathUtils.clamp(offset.length() * (mode === 'in' ? 0.6 : 1.6), controls.minDistance, controls.maxDistance);
+      flyToPose(controls.target.clone(), controls.target.clone().add(offset.setLength(length)));
+    }));
+
+    // F. Interacción: pasar el cursor muestra el nombre; clic selecciona y viaja
     const raycaster = new THREE.Raycaster();
-    raycaster.params.Points.threshold = 5;
+    const pointer = new THREE.Vector2();
+    function pick(clientX, clientY) {
+      if (!planetPoints || !visiblePlanets.length) return null;
+      const bounds = renderer.domElement.getBoundingClientRect();
+      pointer.set(((clientX - bounds.left) / bounds.width) * 2 - 1, -((clientY - bounds.top) / bounds.height) * 2 + 1);
+      raycaster.setFromCamera(pointer, camera);
+      const viewDistance = camera.position.distanceTo(controls.target);
+      raycaster.params.Points.threshold = Math.max(0.25, viewDistance * 0.011);
+      const hits = raycaster.intersectObject(planetPoints);
+      if (!hits.length) return null;
+      let best = hits[0];
+      for (const hit of hits) if (hit.distanceToRay < best.distanceToRay) best = hit;
+      return visiblePlanets[best.index] || null;
+    }
 
     if (renderer) {
-      renderer.domElement.addEventListener('click', (event) => {
-        if (!planetPoints || !visiblePlanets.length) return;
-        const bounds = renderer.domElement.getBoundingClientRect();
-        const pointer = new THREE.Vector2(
-          ((event.clientX - bounds.left) / bounds.width) * 2 - 1,
-          -((event.clientY - bounds.top) / bounds.height) * 2 + 1
-        );
-        raycaster.setFromCamera(pointer, camera);
-        const [hit] = raycaster.intersectObject(planetPoints);
-        if (hit && Number.isInteger(hit.index)) showPlanet(visiblePlanets[hit.index]);
+      let down = null;
+      let hoverFrame = 0;
+      renderer.domElement.addEventListener('pointerdown', (event) => { down = { x: event.clientX, y: event.clientY }; });
+      renderer.domElement.addEventListener('pointerup', (event) => {
+        if (!down || Math.hypot(event.clientX - down.x, event.clientY - down.y) > 6) return;
+        const planet = pick(event.clientX, event.clientY);
+        if (planet) selectPlanet(planet, { fly: true });
       });
+      renderer.domElement.addEventListener('pointermove', (event) => {
+        if (event.pointerType !== 'mouse' || event.buttons) { tooltip.hidden = true; return; }
+        if (hoverFrame) return;
+        hoverFrame = requestAnimationFrame(() => {
+          hoverFrame = 0;
+          const planet = pick(event.clientX, event.clientY);
+          renderer.domElement.style.cursor = planet ? 'pointer' : '';
+          if (!planet) { tooltip.hidden = true; return; }
+          const bounds = mapArea.getBoundingClientRect();
+          tooltip.innerHTML = `<span class="flex items-center gap-2 text-titanio">${shapeIcon(planet.method)}${escapeHTML(planet.name)}</span><span class="text-titanio/65">${escapeHTML(formatDistance(planet.distanceLy))} · ${escapeHTML(methodLabel(planet.method))}</span>`;
+          tooltip.hidden = false;
+          const x = Math.min(event.clientX - bounds.left + 14, bounds.width - tooltip.offsetWidth - 8);
+          tooltip.style.transform = `translate(${x}px, ${event.clientY - bounds.top + 14}px)`;
+        });
+      });
+      renderer.domElement.addEventListener('pointerleave', () => { tooltip.hidden = true; });
     }
 
+    // G. Bucle de animación
+    const projected = new THREE.Vector3();
+    function placeLabel(element, anchor, offsetX = 10, offsetY = -8) {
+      projected.copy(anchor).project(camera);
+      if (projected.z > 1 || projected.z < -1 || Math.abs(projected.x) > 1.1 || Math.abs(projected.y) > 1.1) {
+        element.style.visibility = 'hidden';
+        return;
+      }
+      const width = mapArea.clientWidth;
+      const height = mapArea.clientHeight;
+      element.style.visibility = 'visible';
+      element.style.transform = `translate(${((projected.x + 1) / 2) * width + offsetX}px, ${((1 - projected.y) / 2) * height + offsetY}px)`;
+    }
+
+    const clock = new THREE.Clock();
     function animate() {
       requestAnimationFrame(animate);
+      const delta = clock.getDelta();
       if (!vizActive) return; // no renderizar el mapa mientras está oculto
 
-      const elapsedTime = clock.getElapsedTime();
-
-      // Rotar ligeramente la galaxia
-      galaxyPoints.rotation.y = elapsedTime * 0.03;
-      sunMesh.rotation.y = elapsedTime * 0.1;
-
+      if (flight) {
+        const k = Math.min(1, (performance.now() - flight.start) / flight.duration);
+        const eased = k === 1 ? 1 : 1 - Math.pow(2, -10 * k);
+        controls.target.lerpVectors(flight.fromTarget, flight.toTarget, eased);
+        camera.position.lerpVectors(flight.fromPosition, flight.toPosition, eased);
+        if (k === 1) flight = null;
+      }
       controls.update();
+
+      if (selectionMarker.visible) {
+        selectionMarker.quaternion.copy(camera.quaternion);
+        selectionMarker.scale.setScalar(camera.position.distanceTo(selectionMarker.position) * 0.022);
+      }
+      if (!reduceMotion.matches) {
+        for (const entry of orbitingBodies) {
+          entry.angle += entry.speed * delta;
+          entry.body.position.set(Math.cos(entry.angle) * entry.radius, 0, Math.sin(entry.angle) * entry.radius);
+        }
+      }
+
+      for (const ring of ringLabels) placeLabel(ring.element, ring.anchor, 6, -14);
+      placeLabel(sunLabel, sun.position, 10, -18);
+      if (selectionMarker.visible) placeLabel(selectionLabel, selectionMarker.position, 18, -24);
+      else selectionLabel.style.visibility = 'hidden';
+
       renderer.render(scene, camera);
     }
 
-    if (renderer) animate();
+    if (renderer) {
+      resizeRenderer();
+      animate();
+    }
+    window.addEventListener('resize', resizeRenderer);
 
-    // D. Ajuste de pantalla al redimensionar ventana
-    window.addEventListener('resize', () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      if (renderer) renderer.setSize(window.innerWidth, window.innerHeight);
-    });
-
+    // ----------------------------------------------------
+    // 7. ARRANQUE
+    // ----------------------------------------------------
+    window.addEventListener('hashchange', route);
+    route();
     loadCatalogs();
   </script>
 
