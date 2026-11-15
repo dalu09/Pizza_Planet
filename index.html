@@ -1238,8 +1238,8 @@
       const classLine = [kind || 'Tamaño sin dato', temperature].filter(Boolean).join(' · ');
       const siblings = (systems.get(planet.host) || []).slice().sort((a, b) => (a.orbit ?? a.period ?? Infinity) - (b.orbit ?? b.period ?? Infinity));
       const badges = [];
-      if (planet.habitableZone) badges.push('<span class="inline-flex items-center gap-1.5 px-2 py-1 border border-acido/60 text-acido font-mono text-[0.7rem] uppercase tracking-[0.12em]" title="Criterio: insolación entre 0.25 y 1.5 veces la terrestre">Zona habitable ≈</span>');
-      if (!planet.position) badges.push('<span class="inline-flex px-2 py-1 border border-titanio/30 text-titanio/75 font-mono text-[0.7rem] uppercase tracking-[0.12em]">Sin posición en el mapa</span>');
+      if (planet.habitableZone) badges.push('<span class="inline-flex items-center gap-1.5 px-2.5 py-1.5 border border-acido/60 text-acido font-mono text-[0.7rem] uppercase tracking-[0.12em]" title="Criterio: insolación entre 0.25 y 1.5 veces la terrestre">Zona habitable ≈</span>');
+      if (!planet.position) badges.push('<span class="inline-flex px-2.5 py-1.5 border border-titanio/30 text-titanio/75 font-mono text-[0.7rem] uppercase tracking-[0.12em]">Sin posición en el mapa</span>');
 
       const solutions = !solutionsReady
         ? 'Soluciones publicadas (PS): cargando…'
