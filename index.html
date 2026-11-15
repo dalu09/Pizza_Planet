@@ -687,7 +687,7 @@
       </div>
     </header>
 
-    <main class="flex-1 min-h-0 overflow-y-auto">
+    <main class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
       <div class="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-10 py-5 lg:py-7 flex flex-col gap-5 min-h-full">
         <div class="relative z-30">
           <label for="compare-search" class="label-mono block mb-2">Planeta a comparar</label>
@@ -710,7 +710,7 @@
 
         <p id="compare-sentence" class="text-lg sm:text-xl leading-snug max-w-[60ch]" aria-live="polite"></p>
 
-        <dl id="compare-metrics" class="grid grid-cols-3 border-y border-titanio/15 divide-x divide-titanio/15"></dl>
+        <dl id="compare-metrics" class="grid grid-cols-[repeat(3,minmax(0,1fr))] border-y border-titanio/15 divide-x divide-titanio/15"></dl>
 
         <div class="flex flex-wrap items-center justify-between gap-x-6 gap-y-4 pb-2">
           <p id="compare-weight" class="text-sm text-titanio/75 max-w-[52ch]"></p>
@@ -1346,7 +1346,7 @@
     function metricCell(label, value, note) {
       return `<div class="px-3 sm:px-5 py-4 min-w-0">
         <dt class="font-mono text-[0.68rem] sm:text-[0.72rem] uppercase tracking-[0.16em] text-cian">${label}</dt>
-        <dd class="mt-2 font-display font-bold text-[clamp(1.25rem,4.2vw,2.5rem)] leading-none tabular whitespace-nowrap">${value}</dd>
+        <dd class="mt-2 font-display font-bold text-[clamp(1.05rem,4.2vw,2.5rem)] leading-none tabular whitespace-nowrap">${value}</dd>
         <dd class="mt-2 text-xs sm:text-sm text-titanio/65 leading-snug">${note}</dd>
       </div>`;
     }
@@ -1384,7 +1384,7 @@
       if (planet.mass !== null && radius !== null) {
         gravityValue = planet.mass / (radius * radius);
         gravity = `${approx} ${fmt(gravityValue, gravityValue < 10 ? 2 : 1)}${unit('g')}`;
-        gravityNote = sizeClass(radius) === 'Rocoso' ? 'en la superficie · calculada (M ÷ R²)' : 'a la altura de sus nubes · calculada (M ÷ R²)';
+        gravityNote = sizeClass(radius) === 'Rocoso' ? 'en la superficie · calculada (M / R²)' : 'a la altura de sus nubes · calculada (M / R²)';
       }
       document.getElementById('compare-metrics').innerHTML =
         metricCell('Diámetro', diameter, diameterNote) + metricCell('Masa', mass, massNote) + metricCell('Gravedad', gravity, gravityNote);
@@ -1609,7 +1609,7 @@
         vColor = aColor;
         vShape = shape;
         vec4 mv = modelViewMatrix * vec4(position, 1.0);
-        gl_PointSize = clamp(size * pixelRatio * (260.0 / -mv.z), 2.5 * pixelRatio, 20.0 * pixelRatio);
+        gl_PointSize = clamp(size * pixelRatio * (260.0 / -mv.z), 2.5 * pixelRatio, 13.0 * pixelRatio);
         gl_Position = projectionMatrix * mv;
       }`;
     const POINT_FRAGMENT = `
@@ -1672,7 +1672,7 @@
         scene.remove(object);
         object.geometry.dispose();
       }
-      planetPoints = pointsFrom(visiblePlanets, methodStyle, pointsMaterial);
+      planetPoints = pointsFrom(visiblePlanets, (planet) => methodStyle(planet.method), pointsMaterial);
       const habitable = visiblePlanets.filter((planet) => planet.habitableZone === true);
       habitableRings = pointsFrom(habitable, () => ({ color: '#D7FF2F', shape: 4, size: 15 }), ringsMaterial);
       scene.add(planetPoints, habitableRings);
