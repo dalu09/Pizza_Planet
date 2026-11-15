@@ -357,6 +357,18 @@
     @media (prefers-reduced-motion: no-preference) {
       .compare-svg.is-new .compare-body { animation: compare-in 0.55s var(--ease-out) both; transform-box: fill-box; transform-origin: 50% 100%; }
     }
+    /* ===== 04 · Línea del tiempo: deslizador ===== */
+    .tl-range { -webkit-appearance: none; appearance: none; background: transparent; height: 26px; margin: 0; display: block; cursor: pointer; --fill: 100%; }
+    .tl-range::-webkit-slider-runnable-track { height: 4px; background: linear-gradient(to right, var(--cian) var(--fill), rgba(244, 241, 232, 0.2) var(--fill)); }
+    .tl-range::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; margin-top: -8px; border-radius: 50%; background: var(--plasma); border: 3px solid var(--night); box-shadow: 0 0 0 1.5px var(--plasma); }
+    .tl-range::-moz-range-track { height: 4px; background: rgba(244, 241, 232, 0.2); }
+    .tl-range::-moz-range-progress { height: 4px; background: var(--cian); }
+    .tl-range::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; background: var(--plasma); border: 3px solid var(--night); box-shadow: 0 0 0 1.5px var(--plasma); }
+    .tl-range:focus-visible { outline: none; }
+    .tl-range:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 2px var(--night), 0 0 0 4px var(--cian); }
+    .tl-range:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 2px var(--night), 0 0 0 4px var(--cian); }
+    .tl-tick { position: absolute; top: 2px; transform: translateX(-50%); }
+
     @keyframes compare-in { from { opacity: 0; transform: scale(0.85); } to { opacity: 1; transform: none; } }
   </style>
 </head>
@@ -542,7 +554,7 @@
         </li>
       </ol>
       <div class="mt-7 pt-5 border-t border-titanio/15 flex flex-wrap items-center justify-between gap-4">
-        <p class="font-mono text-xs text-titanio/60 tracking-wide">Atajos: <kbd class="text-titanio">1</kbd>–<kbd class="text-titanio">5</kbd> pantallas · <kbd class="text-titanio">?</kbd> ayuda</p>
+        <p class="font-mono text-xs text-titanio/60 tracking-wide">Atajos: <kbd class="text-titanio">1</kbd>–<kbd class="text-titanio">5</kbd> pantallas · <kbd class="text-titanio">espacio</kbd> reproducir la historia · <kbd class="text-titanio">?</kbd> ayuda</p>
         <button type="button" data-close-help class="font-mono text-sm uppercase tracking-[0.16em] text-cian hover:text-titanio">Entendido</button>
       </div>
     </div>
@@ -726,6 +738,60 @@
   </section>
 
   <!-- ==========================================
+       04 · LÍNEA DEL TIEMPO (viajar en el tiempo)
+       ========================================== -->
+  <section id="timeline-screen" aria-label="Descubrimientos en el tiempo" class="screen screen-hidden absolute inset-0 z-10 bg-night flex flex-col" inert>
+    <header class="relative z-40 flex items-center justify-between gap-4 px-4 sm:px-6 h-14 border-b border-titanio/15 bg-night">
+      <a href="#/" class="flex items-center gap-3" aria-label="Pizza Planet, volver al inicio">
+        <svg viewBox="0 0 40 40" class="w-7 h-7" aria-hidden="true">
+          <circle cx="20" cy="20" r="11" fill="none" stroke="#FF2DAA" stroke-width="2.5" />
+          <path d="M20 20 L25.8 10.6 A11 11 0 0 1 30.3 15.7 Z" fill="#08080C" />
+          <path d="M22 18 L27.8 8.6 A11 11 0 0 1 32.3 13.7 Z" fill="none" stroke="#FF2DAA" stroke-width="2" stroke-linejoin="round" />
+          <ellipse cx="20" cy="20" rx="18" ry="4.5" transform="rotate(-16 20 20)" fill="none" stroke="#D7FF2F" stroke-width="2" />
+        </svg>
+        <span class="font-display font-black tracking-[0.12em] text-sm sm:text-base">PIZZA PLANET</span>
+      </a>
+      <h1 class="hidden md:block font-mono text-xs uppercase tracking-[0.22em] text-titanio/70">Descubrimientos en el tiempo</h1>
+      <div class="flex items-center gap-4">
+        <span class="hidden sm:inline font-mono text-xs tracking-[0.18em] text-titanio/55 tabular" aria-label="Paso 4 de 5">04 / 05</span>
+        <button type="button" data-open-help class="cut w-10 h-10 grid place-items-center bg-titanio/10 hover:bg-titanio/20 font-display font-bold text-sm transition-colors" style="--cut:8px" aria-label="¿Cómo funciona?">?</button>
+      </div>
+    </header>
+
+    <!-- El mismo lienzo 3D de Explorar se mueve aquí -->
+    <div id="timeline-map" class="relative flex-1 min-h-0 overflow-hidden">
+      <div class="absolute top-4 left-4 sm:top-6 sm:left-8 z-20 pointer-events-none">
+        <p id="tl-year" class="font-display font-black text-[clamp(3.6rem,11vw,7.5rem)] leading-[0.9] tabular" style="text-shadow: 4px 4px 0 var(--uv)">2026</p>
+        <p id="tl-total" class="mt-3 font-mono text-sm sm:text-base text-cian tabular" aria-live="polite"></p>
+        <p id="tl-new" class="mt-1 font-mono text-xs sm:text-sm text-titanio/75 tabular"></p>
+      </div>
+      <p class="hidden md:block absolute top-6 right-8 z-20 max-w-[26ch] text-right font-mono text-xs leading-relaxed text-titanio/60 pointer-events-none">
+        Los planetas aparecen en el mapa según el año en que se descubrieron →
+      </p>
+      <div id="tl-selected" class="panel absolute z-20 right-3 bottom-3 left-3 sm:left-auto sm:w-[320px] p-4" style="--cut:12px" hidden></div>
+      <p id="tl-status" role="status" class="absolute inset-0 grid place-items-center px-8 text-center font-mono text-sm text-titanio/75 pointer-events-none">Cargando el catálogo de la NASA…</p>
+    </div>
+
+    <!-- Histograma + deslizador de años -->
+    <div class="relative z-30 border-t border-titanio/15 bg-night px-4 sm:px-8 pt-2 pb-3">
+      <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
+        <button type="button" id="tl-play" class="flex items-center gap-2.5 py-2 font-mono text-xs sm:text-sm uppercase tracking-[0.16em] text-cian hover:text-titanio transition-colors">
+          <i class="fa-solid fa-play w-3" aria-hidden="true"></i><span>Reproducir historia</span>
+        </button>
+        <p class="font-mono text-[0.7rem] sm:text-xs text-titanio/60">Barras: planetas descubiertos cada año · arrastra o usa ← →</p>
+      </div>
+      <div class="relative">
+        <svg id="tl-histogram" class="block w-full h-14 sm:h-20 cursor-pointer" aria-hidden="true"></svg>
+        <input id="tl-range" type="range" min="1992" max="2026" step="1" value="2026" class="tl-range w-full" aria-label="Año de descubrimiento">
+        <div id="tl-ticks" class="relative h-5 font-mono text-[0.7rem] text-titanio/60 tabular" aria-hidden="true"></div>
+      </div>
+      <p class="mt-1 text-[0.7rem] text-titanio/55">Año de descubrimiento según el catálogo actual de planetas confirmados.</p>
+    </div>
+
+    <nav data-tabs class="relative z-40 grid grid-cols-4 border-t border-titanio/15 bg-night" aria-label="Pantallas"></nav>
+  </section>
+
+  <!-- ==========================================
        LIBRERÍAS JS Y LÓGICA DE LA APLICACIÓN
        ========================================== -->
   <!-- Three.js y OrbitControls para la renderización 3D -->
@@ -754,9 +820,11 @@
     const SCREENS = {
       inicio: { element: document.getElementById('home-screen'), title: 'Pizza Planet · Exoplanetas de la NASA en 3D' },
       explorar: { element: document.getElementById('viz-screen'), title: 'Explorar 3D · Pizza Planet' },
-      comparar: { element: document.getElementById('compare-screen'), title: 'Comparar con la Tierra · Pizza Planet' }
+      comparar: { element: document.getElementById('compare-screen'), title: 'Comparar con la Tierra · Pizza Planet' },
+      tiempo: { element: document.getElementById('timeline-screen'), title: 'Descubrimientos en el tiempo · Pizza Planet' }
     };
-    const SHORTCUTS = { '1': '#/', '2': '#/explorar', '3': '#/comparar' };
+    const SHORTCUTS = { '1': '#/', '2': '#/explorar', '3': '#/comparar', '4': '#/tiempo' };
+    let timelineActive = false;
     const PLANET_SCREENS = ['explorar', 'comparar']; // pantallas cuya ruta lleva el planeta seleccionado
     const TABS = [
       { key: 'explorar', label: 'Explorar 3D' },
@@ -787,9 +855,25 @@
         screen.element.inert = !active;
       }
       document.title = SCREENS[target].title;
-      vizActive = target === 'explorar';
-      if (vizActive && currentScreen !== 'explorar') resizeRenderer();
+      const previous = currentScreen;
+      const wasTimeline = timelineActive;
+      timelineActive = target === 'tiempo';
+      vizActive = target === 'explorar' || timelineActive;
       currentScreen = target;
+      if (!timelineActive) stopPlay();
+
+      // Un solo lienzo WebGL: se mueve entre Explorar y la línea del tiempo
+      if (timelineActive) {
+        attachMap(timelineMap);
+        if (/^\d{4}$/.test(param)) timelineYear = THREE.MathUtils.clamp(Number(param), timelineRange.min, timelineRange.max);
+        if (planets.length) applyTimeline();
+        if (!param) history.replaceState(null, '', `#/tiempo/${timelineYear}`);
+        if (previous !== 'tiempo') flyToPose(OVERVIEW.target, OVERVIEW.position);
+      } else if (target === 'explorar') {
+        attachMap(mapArea);
+        if (wasTimeline && planets.length) applyFilters();
+      }
+      if (vizActive && previous !== target) resizeRenderer();
 
       if (PLANET_SCREENS.includes(target) && param) {
         if (planets.length) {
@@ -822,7 +906,12 @@
       if (event.target.closest('input, select, textarea, [contenteditable]')) return;
       if (event.key === '?') { helpDialog.open ? helpDialog.close() : helpDialog.showModal(); return; }
       if (helpDialog.open) return;
-      if (event.key === '/' && vizActive) {
+      if (event.key === ' ' && currentScreen === 'tiempo' && !event.target.closest('button, input')) {
+        event.preventDefault();
+        togglePlay();
+        return;
+      }
+      if (event.key === '/' && currentScreen === 'explorar') {
         event.preventDefault();
         if (compactLayout.matches) openFilters();
         searchInput.focus();
@@ -1009,7 +1098,8 @@
         document.querySelectorAll('[data-ticker-count]').forEach((node) => { node.textContent = `${planetTotal} exoplanetas`; });
 
         buildFilterControls();
-        applyFilters();
+        buildTimeline();
+        if (timelineActive) applyTimeline(); else applyFilters();
         const initial = (pendingSelection && planetByName.get(pendingSelection)) || planetByName.get('TRAPPIST-1 e') || positioned[0];
         selectPlanet(initial, { fly: Boolean(pendingSelection), updateHash: false });
         pendingSelection = null;
@@ -1304,6 +1394,7 @@
       if (updateHash && PLANET_SCREENS.includes(currentScreen)) history.replaceState(null, '', planetHash(currentScreen));
       renderTabs();
       renderCompare({ animate: true });
+      renderTimelineSelected();
     }
 
     // ----------------------------------------------------
@@ -1502,6 +1593,16 @@
     // ----------------------------------------------------
     const container = document.getElementById('galaxy-container');
     const mapArea = document.getElementById('map-area');
+    const timelineMap = document.getElementById('timeline-map');
+    let mapHost = mapArea; // contenedor donde vive el lienzo ahora mismo
+    function attachMap(host) {
+      if (mapHost === host) return;
+      const canvasLayer = document.getElementById('galaxy-container');
+      // orden: lienzo, etiquetas, tooltip (en ese orden de apilamiento)
+      host.prepend(canvasLayer, labelsLayer, tooltip);
+      tooltip.hidden = true;
+      mapHost = host;
+    }
     const labelsLayer = document.getElementById('map-labels');
     const tooltip = document.getElementById('map-tooltip');
 
@@ -1536,13 +1637,13 @@
 
     function resizeRenderer() {
       if (!renderer) return;
-      const width = mapArea.clientWidth || window.innerWidth;
-      const height = mapArea.clientHeight || window.innerHeight;
+      const width = mapHost.clientWidth || window.innerWidth;
+      const height = mapHost.clientHeight || window.innerHeight;
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, compactLayout.matches ? 1.5 : 2));
       renderer.setSize(width, height);
       camera.aspect = width / height;
       // En móvil la tarjeta del planeta ocupa la parte baja: el centro del mapa se dibuja más arriba
-      if (compactLayout.matches) camera.setViewOffset(width, height, 0, height * 0.2, width, height);
+      if (compactLayout.matches && !timelineActive) camera.setViewOffset(width, height, 0, height * 0.2, width, height);
       else camera.clearViewOffset();
       camera.updateProjectionMatrix();
       // En pantallas verticales el mapa necesita más distancia para caber completo
@@ -1640,7 +1741,11 @@
     const ringUniforms = { pixelRatio: pointUniforms.pixelRatio, opacity: { value: 0.85 } };
     const ringsMaterial = new THREE.ShaderMaterial({ uniforms: ringUniforms, vertexShader: POINT_VERTEX, fragmentShader: POINT_FRAGMENT, transparent: true, depthWrite: false });
     const colorCache = new Map();
-    const colorOf = (hex) => { if (!colorCache.has(hex)) colorCache.set(hex, new THREE.Color(hex)); return colorCache.get(hex); };
+    const colorOf = (hex, dim = 1) => {
+      const key = `${hex}|${dim}`;
+      if (!colorCache.has(key)) colorCache.set(key, new THREE.Color(hex).multiplyScalar(dim));
+      return colorCache.get(key);
+    };
     let planetPoints = null;
     let habitableRings = null;
 
@@ -1651,7 +1756,7 @@
       const shapes = new Float32Array(list.length);
       list.forEach((planet, i) => {
         const style = styleFor(planet);
-        const color = colorOf(style.color);
+        const color = colorOf(style.color, style.dim ?? 1);
         positions.set([planet.position.x, planet.position.y, planet.position.z], i * 3);
         colors.set([color.r, color.g, color.b], i * 3);
         sizes[i] = style.size;
@@ -1672,7 +1777,14 @@
         scene.remove(object);
         object.geometry.dispose();
       }
-      planetPoints = pointsFrom(visiblePlanets, (planet) => methodStyle(planet.method), pointsMaterial);
+      // En la línea del tiempo, los del año elegido brillan y crecen; los anteriores se atenúan
+      const styleFor = timelineActive
+        ? (planet) => {
+          const base = methodStyle(planet.method);
+          return planet.year === timelineYear ? { ...base, size: base.size * 1.7 } : { ...base, dim: 0.4 };
+        }
+        : (planet) => methodStyle(planet.method);
+      planetPoints = pointsFrom(visiblePlanets, styleFor, pointsMaterial);
       const habitable = visiblePlanets.filter((planet) => planet.habitableZone === true);
       habitableRings = pointsFrom(habitable, () => ({ color: '#D7FF2F', shape: 4, size: 15 }), ringsMaterial);
       scene.add(planetPoints, habitableRings);
@@ -1815,7 +1927,7 @@
       renderer.domElement.addEventListener('pointerup', (event) => {
         if (!down || Math.hypot(event.clientX - down.x, event.clientY - down.y) > 6) return;
         const planet = pick(event.clientX, event.clientY);
-        if (planet) selectPlanet(planet, { fly: true });
+        if (planet) selectPlanet(planet, { fly: !timelineActive });
       });
       renderer.domElement.addEventListener('pointermove', (event) => {
         if (event.pointerType !== 'mouse' || event.buttons) { tooltip.hidden = true; return; }
@@ -1825,7 +1937,7 @@
           const planet = pick(event.clientX, event.clientY);
           renderer.domElement.style.cursor = planet ? 'pointer' : '';
           if (!planet) { tooltip.hidden = true; return; }
-          const bounds = mapArea.getBoundingClientRect();
+          const bounds = mapHost.getBoundingClientRect();
           tooltip.innerHTML = `<span class="flex items-center gap-2 text-titanio">${shapeIcon(planet.method)}${escapeHTML(planet.name)}</span><span class="text-titanio/65">${escapeHTML(formatDistance(planet.distanceLy))} · ${escapeHTML(methodLabel(planet.method))}</span>`;
           tooltip.hidden = false;
           const x = Math.min(event.clientX - bounds.left + 14, bounds.width - tooltip.offsetWidth - 8);
@@ -1843,8 +1955,8 @@
         element.style.visibility = 'hidden';
         return;
       }
-      const width = mapArea.clientWidth;
-      const height = mapArea.clientHeight;
+      const width = mapHost.clientWidth;
+      const height = mapHost.clientHeight;
       element.style.visibility = 'visible';
       element.style.transform = `translate(${((projected.x + 1) / 2) * width + offsetX}px, ${((1 - projected.y) / 2) * height + offsetY}px)`;
     }
@@ -1863,6 +1975,13 @@
         if (k === 1) flight = null;
       }
       controls.update();
+
+      // En la línea del tiempo: sin órbitas, y la selección solo si ya se había descubierto
+      const selectionShown = Boolean(selectedPlanet?.position) &&
+        (!timelineActive || (selectedPlanet.year !== null && selectedPlanet.year <= timelineYear));
+      selectionMarker.visible = selectionShown;
+      sunLine.visible = selectionShown && !timelineActive;
+      if (systemGroup) systemGroup.visible = !timelineActive;
 
       if (selectionMarker.visible) {
         selectionMarker.quaternion.copy(camera.quaternion);
@@ -1888,6 +2007,141 @@
       animate();
     }
     window.addEventListener('resize', resizeRenderer);
+
+    // ----------------------------------------------------
+    // 6b. LÍNEA DEL TIEMPO
+    // ----------------------------------------------------
+    const timelineRange = document.getElementById('tl-range');
+    const timelineHistogram = document.getElementById('tl-histogram');
+    const timelinePlay = document.getElementById('tl-play');
+    const timelineSelected = document.getElementById('tl-selected');
+    let timelineYear = 2026;
+    let yearCounts = new Map();
+    let firstYear = 1992;
+    let lastYear = 2026;
+    let playTimer = null;
+    const THUMB_HALF = 10; // la mitad del ancho del control: alinea barras y deslizador
+
+    function buildTimeline() {
+      yearCounts = new Map();
+      for (const planet of planets) if (planet.year !== null) yearCounts.set(planet.year, (yearCounts.get(planet.year) || 0) + 1);
+      const years = [...yearCounts.keys()];
+      firstYear = Math.min(...years);
+      lastYear = Math.max(...years);
+      timelineRange.min = firstYear;
+      timelineRange.max = lastYear;
+      if (!/^#\/tiempo\/\d{4}/.test(location.hash)) timelineYear = lastYear;
+      timelineYear = THREE.MathUtils.clamp(timelineYear, firstYear, lastYear);
+      const ticks = [firstYear, 2000, 2010, 2020, lastYear].filter((year, i, list) => year >= firstYear && year <= lastYear && list.indexOf(year) === i);
+      document.getElementById('tl-ticks').innerHTML = ticks.map((year) =>
+        `<span class="tl-tick" style="left: calc(${THUMB_HALF}px + (100% - ${THUMB_HALF * 2}px) * ${(year - firstYear) / (lastYear - firstYear)})">${year}</span>`).join('');
+    }
+
+    function drawHistogram() {
+      if (!yearCounts.size) return;
+      const width = timelineHistogram.clientWidth;
+      const height = timelineHistogram.clientHeight;
+      if (!width || !height) return;
+      const span = lastYear - firstYear;
+      const step = (width - THUMB_HALF * 2) / span;
+      const barWidth = Math.max(2, step * 0.62);
+      const maxCount = Math.max(...yearCounts.values());
+      let peakYear = firstYear;
+      for (const [year, count] of yearCounts) if (count === maxCount) peakYear = year;
+      const bars = [];
+      for (let year = firstYear; year <= lastYear; year++) {
+        const count = yearCounts.get(year) || 0;
+        const barHeight = count ? Math.max(2, (count / maxCount) * (height - 16)) : 0;
+        const x = THUMB_HALF + (year - firstYear) * step - barWidth / 2;
+        const fill = year === timelineYear ? '#FF2DAA' : year < timelineYear ? 'rgba(40,231,245,.62)' : 'rgba(244,241,232,.16)';
+        bars.push(`<rect x="${x.toFixed(1)}" y="${(height - barHeight).toFixed(1)}" width="${barWidth.toFixed(1)}" height="${barHeight.toFixed(1)}" fill="${fill}"/>`);
+      }
+      const peakX = THUMB_HALF + (peakYear - firstYear) * step;
+      bars.push(`<text x="${peakX}" y="9" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="rgba(244,241,232,.7)">${numberFormat.format(maxCount)}</text>`);
+      timelineHistogram.setAttribute('viewBox', `0 0 ${width} ${height}`);
+      timelineHistogram.innerHTML = bars.join('');
+    }
+    if ('ResizeObserver' in window) new ResizeObserver(drawHistogram).observe(timelineHistogram);
+
+    function applyTimeline() {
+      visiblePlanets = positioned.filter((planet) => planet.year !== null && planet.year <= timelineYear);
+      renderPlanetPoints();
+      const total = planets.filter((planet) => planet.year !== null && planet.year <= timelineYear).length;
+      const added = yearCounts.get(timelineYear) || 0;
+      document.getElementById('tl-year').textContent = timelineYear;
+      document.getElementById('tl-total').textContent = `${numberFormat.format(total)} ${total === 1 ? 'planeta confirmado' : 'planetas confirmados'} hasta ${timelineYear}`;
+      document.getElementById('tl-new').textContent = added
+        ? `+${numberFormat.format(added)} ${added === 1 ? 'descubierto' : 'descubiertos'} ese año`
+        : 'Ningún descubrimiento ese año';
+      document.getElementById('tl-status').textContent = webglUnavailable ? 'Tu navegador no puede mostrar el mapa 3D (WebGL). El histograma y los conteos siguen disponibles.' : '';
+      timelineRange.value = timelineYear;
+      timelineRange.style.setProperty('--fill', `${((timelineYear - firstYear) / (lastYear - firstYear)) * 100}%`);
+      timelineRange.setAttribute('aria-valuetext', `${timelineYear}: ${numberFormat.format(total)} planetas confirmados, ${numberFormat.format(added)} ese año`);
+      drawHistogram();
+      renderTimelineSelected();
+    }
+
+    function setYear(year, { fromUser = true } = {}) {
+      if (fromUser) stopPlay();
+      timelineYear = THREE.MathUtils.clamp(year, firstYear, lastYear);
+      if (planets.length) applyTimeline();
+      if (currentScreen === 'tiempo') history.replaceState(null, '', `#/tiempo/${timelineYear}`);
+    }
+
+    function renderTimelineSelected() {
+      const planet = selectedPlanet;
+      if (!planet || !timelineActive) { timelineSelected.hidden = true; return; }
+      timelineSelected.hidden = false;
+      const discovered = planet.year !== null && planet.year <= timelineYear;
+      const status = planet.year === null ? 'año de descubrimiento sin dato'
+        : discovered ? `descubierto en ${planet.year}` : `aún no descubierto: llega en ${planet.year}`;
+      timelineSelected.innerHTML = `
+        <p class="flex items-center gap-2 font-display font-bold text-lg leading-tight">${shapeIcon(planet.method)}<span class="break-words">${escapeHTML(planet.name)}</span></p>
+        <p class="mt-1 text-sm text-titanio/75">${escapeHTML(status)} · ${escapeHTML(methodLabel(planet.method))}</p>
+        <div class="mt-3 flex flex-wrap gap-x-5 gap-y-2 font-mono text-xs uppercase tracking-[0.14em]">
+          ${planet.year !== null && planet.year !== timelineYear ? `<button type="button" data-tl-goto="${planet.year}" class="text-cian hover:text-titanio">Ir a ${planet.year}</button>` : ''}
+          <a href="#/explorar/${encodeURIComponent(planet.name)}" class="text-cian hover:text-titanio">Ver en el mapa</a>
+          <a href="#/comparar/${encodeURIComponent(planet.name)}" class="text-cian hover:text-titanio">Comparar</a>
+        </div>`;
+    }
+    timelineSelected.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-tl-goto]');
+      if (button) setYear(Number(button.dataset.tlGoto));
+    });
+
+    function stopPlay() {
+      if (!playTimer) return;
+      clearInterval(playTimer);
+      playTimer = null;
+      if (controls) controls.autoRotate = false;
+      timelinePlay.innerHTML = '<i class="fa-solid fa-play w-3" aria-hidden="true"></i><span>Reproducir historia</span>';
+    }
+    function togglePlay() {
+      if (playTimer) { stopPlay(); return; }
+      if (!planets.length) return;
+      if (timelineYear >= lastYear) setYear(firstYear, { fromUser: false });
+      if (controls && !reduceMotion.matches) { controls.autoRotate = true; controls.autoRotateSpeed = 0.5; }
+      timelinePlay.innerHTML = '<i class="fa-solid fa-pause w-3" aria-hidden="true"></i><span>Pausar</span>';
+      playTimer = setInterval(() => {
+        if (timelineYear >= lastYear) { stopPlay(); return; }
+        setYear(timelineYear + 1, { fromUser: false });
+      }, 650);
+    }
+    timelinePlay.addEventListener('click', togglePlay);
+    timelineRange.addEventListener('input', () => setYear(Number(timelineRange.value)));
+    timelineHistogram.addEventListener('pointerdown', (event) => {
+      const pick = (clientX) => {
+        const bounds = timelineHistogram.getBoundingClientRect();
+        const ratio = (clientX - bounds.left - THUMB_HALF) / (bounds.width - THUMB_HALF * 2);
+        setYear(Math.round(firstYear + ratio * (lastYear - firstYear)));
+      };
+      pick(event.clientX);
+      timelineHistogram.setPointerCapture(event.pointerId);
+      const move = (moveEvent) => pick(moveEvent.clientX);
+      const up = () => { timelineHistogram.removeEventListener('pointermove', move); timelineHistogram.removeEventListener('pointerup', up); };
+      timelineHistogram.addEventListener('pointermove', move);
+      timelineHistogram.addEventListener('pointerup', up);
+    });
 
     // ----------------------------------------------------
     // 7. ARRANQUE
