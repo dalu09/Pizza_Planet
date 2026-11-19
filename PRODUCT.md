@@ -50,7 +50,7 @@ The explorer runs on a real, dated snapshot of the NASA catalogs (exported 2026-
 ## Brand Commitments
 
 - **Name:** Pizza Planet. Its own identity: no Toy Story logo, rocket or characters.
-- **Visual direction:** "Cyber Diner", defined in `design/marca-cyber-diner.md`. It is binding as a style reference.
+- **Visual direction:** "Mundos por descubrir", an illustrated night sky defined in `design/marca-atlas-observatorio.md`. Its visual language is binding; preserve the existing Pizza Planet logos.
 - **Structure:** binding wireframe of five screens in `design/boceto.png` and `design/boceto-01…05-*.png`.
 - **Language:** Spanish.
 
@@ -58,7 +58,7 @@ The explorer runs on a real, dated snapshot of the NASA catalogs (exported 2026-
 
 - Real data: the two NASA CSVs listed above, with column descriptions in their `# COLUMN` headers.
 - Wireframes: `design/boceto*.png`.
-- Brand study: `design/marca-cyber-diner.md`.
+- Brand direction: `design/marca-atlas-observatorio.md`.
 - No testimonials, partners or external endorsements exist. None should be invented, and the page must not imply NASA endorses it beyond citing it as the data source.
 
 ## Product Principles

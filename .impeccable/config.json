@@ -7,7 +7,7 @@
         "rule": "overused-font",
         "value": "space grotesk",
         "createdAt": "2026-11-15T02:53:56.750Z",
-        "reason": "user confirmed: brief pins Orbitron / Space Grotesk / IBM Plex Mono (design/marca-cyber-diner.md)"
+        "reason": "user requested a colorful illustrated night sky: Space Grotesk headlines, preserve Pizza Planet logos, and IBM Plex Mono data (design/marca-atlas-observatorio.md)"
       },
       {
         "rule": "marquee",
@@ -16,7 +16,7 @@
           "index.html"
         ],
         "createdAt": "2026-11-15T02:53:56.937Z",
-        "reason": "brand doc design/marca-cyber-diner.md pins ticker bands; decorative, aria-hidden, stops under prefers-reduced-motion"
+        "reason": "the existing ticker remains a decorative, aria-hidden data strip and stops under prefers-reduced-motion"
       }
     ]
   }
